@@ -50,14 +50,14 @@ global:
   fonts:
     # Chinese fonts
     chinese: 
-      enable: false # Whether to enable custom chinese fonts
-      family: Ma Shan Zheng # Font family
-      url: https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap # Font URL to CSS file
+      enable: true # Whether to enable custom chinese fonts
+      family: Xiaolai Mono SC # Font family
+      url: /css/fonts-zh.css # Font URL to CSS file
     # English fonts
     english: 
       enable: true # Whether to enable custom english fonts
       family: JetBrainsMono NF # Font family
-      url: /css/fonts.css # Font URL to CSS file
+      url: /css/fonts-en.css # Font URL to CSS file
   # Content max width
   content_max_width: 1000px
   # Sidebar width
@@ -198,9 +198,9 @@ navbar:
     About: 
       icon: fa-thin fa-user-chef
       submenus:
-        Me: /about
+        Me: /about/me
         Github: https://github.com/xjn-La-La-land
-        Friends: /friends
+        Photos: /about/photos
     # Links: 
     #   icon: fa-regular fa-link
     #   submenus:
@@ -406,6 +406,12 @@ plugins:
   # RSS feed. Requires hexo-generator-feed (npm i hexo-generator-feed). See https://github.com/hexojs/hexo-generator-feed
   feed:
     enable: true # Whether to enable
+    type:
+      - atom
+      - rss2
+    path:
+      - /feed/atom.xml
+      - /feed/rss2.xml
   # Aplayer. See https://github.com/DIYgod/APlayer
   aplayer:
     enable: true # Whether to enable
@@ -415,6 +421,7 @@ plugins:
         artist: Wiz Khalifa, Charlie Puth # audio artist
         url: /music/see-you-again.mp3 # audio url
         cover: /images/see-you-again.webp # audio cover url
+        lrc: /music/see-you-again.lrc
       - name: Something Just Like This
         artist: Coldplay
         url: https://evan.beee.top/music/Something%20Just%20Like%20This%20-%20The%20Chainsmokers%E3%80%81Coldplay.mp3

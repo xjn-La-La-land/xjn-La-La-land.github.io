@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Xiaolai Mono SC';
+    src: url('/fonts/Xiaolai/XiaolaiMonoSC-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Xiaolai Mono SC', sans-serif;
+}

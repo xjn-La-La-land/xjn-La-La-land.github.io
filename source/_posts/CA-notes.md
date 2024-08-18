@@ -3,7 +3,7 @@ title: CA-notes
 date: 2024-08-18 10:01:03
 tags: CS-notes
 comments: false
-intro: 《计算机体系结构基础》复习笔记
+excerpt: 《计算机体系结构基础》复习笔记
 ---
 # 《计算机体系结构基础》复习笔记
 
