@@ -11,7 +11,7 @@
 # Docs: https://redefine-docs.ohevan.com/basic/info
 info:
   # Site title
-  title: 循此苦旅，直抵群星。
+  title: xiejianan's homepage
   # Author name
   author: Jianan Xie
   # Site URL
@@ -98,7 +98,7 @@ fontawesome: # Pro v6.2.1
   # Light version
   light: false
   # Duotone version
-  duotone: false
+  duotone: true
   # Sharp Solid version
   sharp_solid: false
 # FONTAWESOME <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
@@ -228,15 +228,15 @@ home:
     announcement: # Announcement text
     show_on_mobile: true # Whether to show sidebar navigation on mobile sheet menu
     links:
-      # Archives: 
-      #   path: /archives 
-      #   icon: fa-regular fa-archive # can be empty
-      # Tags: 
-      #   path: /tags 
-      #   icon: fa-regular fa-tags # can be empty
-      # Categories: 
-      #   path: /categories 
-      #   icon: fa-regular fa-folder # can be empty
+      Archives: 
+        path: /archives 
+        icon: fa-regular fa-box-archive # can be empty
+      Tags: 
+        path: /tags 
+        icon: fa-regular fa-tags # can be empty
+      Categories: 
+        path: /categories 
+        icon: fa-duotone fa-solid fa-layer-group # can be empty
       # ...... # you can add more
   # Article date format
   article_date_format: auto # auto, relative, YYYY-MM-DD, YYYY-MM-DD HH:mm:ss etc.
@@ -285,9 +285,9 @@ articles:
     copy: true # Whether to enable code block copy button
     style: mac # mac | simple
     font: # Custom font
-      enable: false # Whether to enable
-      family: # Font family
-      url: # Font URL to CSS file
+      enable: true # Whether to enable
+      family: JetBrainsMono NF # Font family
+      url: /css/fonts.css # Font URL to CSS file
   # Table of contents settings
   toc:
     enable: true # Whether to enable TOC
@@ -304,13 +304,13 @@ articles:
   # Article recommendation. Requires nodejieba (npm install nodejieba). Transplanted from hexo-theme-volantis.
   recommendation:
     # Whether to enable article recommendation
-    enable: false
+    enable: true
     # Article recommendation title
     title: 推荐阅读
     # Max number of articles to display
     limit: 3
     # Max number of articles to display mobile
-    mobile_limit: 2
+    mobile_limit: 3
     # Placeholder image
     placeholder: /images/wallhaven-wqery6-light.webp
     # Skip directory
@@ -371,11 +371,11 @@ footer:
   # Icon in footer, write fontawesome icon code here
   icon: '<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>'
   # The start time of the website, format: YYYY/MM/DD HH:mm:ss
-  start: 2022/8/17 11:45:14
+  start: 2024/8/17 14:25:36
   # Site statistics
   statistics: true # show site statistics or not (total articles, total words)
   # Footer message
-  customize:
+  customize: "造次必于是，颠沛必于是。"
   # ICP record number. See https://beian.miit.gov.cn/
   icp:
     enable: false # Whether to enable
