@@ -211,38 +211,39 @@ comments: false
 ##### 异常处理流程
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-096r{color:#ffffff;text-align:left;vertical-align:top}
+.tg .tg-5mvr{border-color:#ffffff;color:#ffffff;font-family:"Trebuchet MS", Helvetica, sans-serif !important;text-align:left;
+  vertical-align:top}
 </style>
 <table class="tg"><thead>
   <tr>
-    <th class="tg-096r">异常处理准备</th>
-    <th class="tg-096r">调整CPU的权限等级，关闭全局中断<br>硬件保存异常现场的部分信息<br>记录异常来源</th>
-    <th class="tg-096r">0 --&gt; CRMD.PLV, 0 --&gt; CRMD.IE<br>CRMD.PLV --&gt; PRMD.PPLV, CRMD.IE --&gt; PRMD.PIR<br>异常一级编号 --&gt; ESTAT.Ecode<br>异常二级编号 --&gt; ESTAT.EsubCode<br>异常指令的机器码 --&gt; BADI<br>引起异常的虚地址 --&gt; BADV</th>
+    <th class="tg-5mvr">异常处理准备</th>
+    <th class="tg-5mvr">调整CPU的权限等级，关闭全局中断<br>硬件保存异常现场的部分信息<br>记录异常来源</th>
+    <th class="tg-5mvr">0 --&gt; CRMD.PLV, 0 --&gt; CRMD.IE<br>CRMD.PLV --&gt; PRMD.PPLV, CRMD.IE --&gt; PRMD.PIR<br>异常一级编号 --&gt; ESTAT.Ecode<br>异常二级编号 --&gt; ESTAT.EsubCode<br>异常指令的机器码 --&gt; BADI<br>引起异常的虚地址 --&gt; BADV</th>
   </tr></thead>
 <tbody>
   <tr>
-    <td class="tg-096r">确定异常来源</td>
-    <td class="tg-096r">异常处理程序根据异常编号跳转到不同的处理函数入口</td>
-    <td class="tg-096r">入口页号来自于 EENTRY 寄存器；<br>页内偏移来自于 ECFG.VS 和 异常编号（向量化中断）</td>
+    <td class="tg-5mvr">确定异常来源</td>
+    <td class="tg-5mvr">异常处理程序根据异常编号跳转到不同的处理函数入口</td>
+    <td class="tg-5mvr">入口页号来自于 EENTRY 寄存器；<br>页内偏移来自于 ECFG.VS 和 异常编号（向量化中断）</td>
   </tr>
   <tr>
-    <td class="tg-096r">保存执行状态</td>
-    <td class="tg-096r">由软件将通用寄存器、状态寄存器的值保存到栈中</td>
-    <td class="tg-096r"></td>
+    <td class="tg-5mvr">保存执行状态</td>
+    <td class="tg-5mvr">由软件将通用寄存器、状态寄存器的值保存到栈中</td>
+    <td class="tg-5mvr"></td>
   </tr>
   <tr>
-    <td class="tg-096r">处理异常</td>
-    <td class="tg-096r">跳转到对应的异常处理程序异常处理</td>
-    <td class="tg-096r"></td>
+    <td class="tg-5mvr">处理异常</td>
+    <td class="tg-5mvr">跳转到对应的异常处理程序异常处理</td>
+    <td class="tg-5mvr"></td>
   </tr>
   <tr>
-    <td class="tg-096r">恢复执行状态并返回</td>
-    <td class="tg-096r">将栈中保存的异常现场恢复，最后执行异常返回指令 ertn</td>
-    <td class="tg-096r"></td>
+    <td class="tg-5mvr">恢复执行状态并返回</td>
+    <td class="tg-5mvr">将栈中保存的异常现场恢复，最后执行异常返回指令 ertn</td>
+    <td class="tg-5mvr"></td>
   </tr>
 </tbody>
 </table>
@@ -391,92 +392,89 @@ LoongArch参数传递规则：
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-bsre{border-color:#ffffff;color:#ffffff;text-align:left;vertical-align:middle}
+.tg .tg-il3a{border-color:#ffffff;color:#ffffff;text-align:left;vertical-align:top}
 </style>
-<table class="tg">
-<thead>
+<table class="tg"><thead>
   <tr>
-    <th class="tg-bsre" rowspan="12">整数调用规范<br>提供了8个参数寄存器 a0 ~ a7</th>
-    <th class="tg-bsre" rowspan="6">标量</th>
-    <th class="tg-bsre" rowspan="2">标量宽度 &lt;= XLEN</th>
-    <th class="tg-bsre">有可用的寄存器，则在单个寄存器中传递</th>
+    <th class="tg-il3a" rowspan="12">整数调用规范<br>提供了8个参数寄存器 a0 ~ a7</th>
+    <th class="tg-il3a" rowspan="6">标量</th>
+    <th class="tg-il3a" rowspan="2">标量宽度 &lt;= XLEN</th>
+    <th class="tg-il3a">有可用的寄存器，则在单个寄存器中传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre">没有可用的寄存器，则在栈上传递</th>
+    <th class="tg-il3a">没有可用的寄存器，则在栈上传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre" rowspan="3">XLEN &lt; 标量宽度 &lt;= 2 * XLEN</th>
-    <th class="tg-bsre">有2个可用的寄存器，则低XLEN位在小编号寄存器中，高XLEN位在大编号寄存器中</th>
+    <th class="tg-il3a" rowspan="3">XLEN &lt; 标量宽度 &lt;= 2 * XLEN</th>
+    <th class="tg-il3a">有2个可用的寄存器，则低XLEN位在小编号寄存器中，高XLEN位在大编号寄存器中</th>
   </tr>
   <tr>
-    <th class="tg-bsre">只有1个可用的寄存器，则低XLEN位在寄存器中，高XLEN位在栈上传递</th>
+    <th class="tg-il3a">只有1个可用的寄存器，则低XLEN位在寄存器中，高XLEN位在栈上传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre">没有可用的寄存器，则在栈上传递</th>
+    <th class="tg-il3a">没有可用的寄存器，则在栈上传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre">标量宽度 &gt; 2 * XLEN</th>
-    <th class="tg-bsre">通过引用传递，在参数列表中用地址替换</th>
+    <th class="tg-il3a">标量宽度 &gt; 2 * XLEN</th>
+    <th class="tg-il3a">通过引用传递，在参数列表中用地址替换</th>
   </tr>
   <tr>
-    <th class="tg-bsre" rowspan="6">结构体</th>
-    <th class="tg-bsre" rowspan="2">结构体宽度 &lt;= XLEN</th>
-    <th class="tg-bsre">有可用的寄存器，则在单个寄存器中传递</th>
+    <th class="tg-il3a" rowspan="6">结构体</th>
+    <th class="tg-il3a" rowspan="2">结构体宽度 &lt;= XLEN</th>
+    <th class="tg-il3a">有可用的寄存器，则在单个寄存器中传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre">没有可用的寄存器，则在栈上传递</th>
+    <th class="tg-il3a">没有可用的寄存器，则在栈上传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre" rowspan="3">XLEN &lt; 结构体宽度 &lt;= 2 * XLEN</th>
-    <th class="tg-bsre">有2个可用的寄存器，则前半部分小编号寄存器中，后半部分在大编号寄存器中</th>
+    <th class="tg-il3a" rowspan="3">XLEN &lt; 结构体宽度 &lt;= 2 * XLEN</th>
+    <th class="tg-il3a">有2个可用的寄存器，则前半部分小编号寄存器中，后半部分在大编号寄存器中</th>
   </tr>
   <tr>
-    <th class="tg-bsre">只有1个可用的寄存器，则前半部分在寄存器中，后半部分在栈上传递</th>
+    <th class="tg-il3a">只有1个可用的寄存器，则前半部分在寄存器中，后半部分在栈上传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre">没有可用的寄存器，则在栈上传递</th>
+    <th class="tg-il3a">没有可用的寄存器，则在栈上传递</th>
   </tr>
   <tr>
-    <th class="tg-bsre">结构体宽度 &gt; 2 * XLEN</th>
-    <th class="tg-bsre">通过引用传递，并在参数列表中被替换为地址</th>
-  </tr>
-</thead>
+    <th class="tg-il3a">结构体宽度 &gt; 2 * XLEN</th>
+    <th class="tg-il3a">通过引用传递，并在参数列表中被替换为地址</th>
+  </tr></thead>
 <tbody>
   <tr>
-    <td class="tg-bsre" rowspan="7">浮点调用规范<br>提供了8个浮点参数寄存器 fa0 ~ fa7<br>（可变参数使用整型参数寄存器传递！）</td>
-    <td class="tg-bsre" rowspan="3">标量</td>
-    <td class="tg-bsre" rowspan="2">标量宽度 &lt;= FLEN</td>
-    <td class="tg-bsre">有可用的浮点参数寄存器，通过单个寄存器传递</td>
+    <td class="tg-il3a" rowspan="7">浮点调用规范<br>提供了8个浮点参数寄存器 fa0 ~ fa7<br>（可变参数使用整型参数寄存器传递！）</td>
+    <td class="tg-il3a" rowspan="3">标量</td>
+    <td class="tg-il3a" rowspan="2">标量宽度 &lt;= FLEN</td>
+    <td class="tg-il3a">有可用的浮点参数寄存器，通过单个寄存器传递</td>
   </tr>
   <tr>
-    <td class="tg-bsre">没有可用的浮点参数寄存器，使用整数参数寄存器传递</td>
+    <td class="tg-il3a">没有可用的浮点参数寄存器，使用整数参数寄存器传递</td>
   </tr>
   <tr>
-    <td class="tg-bsre">标量宽度 &gt; FLEN</td>
-    <td class="tg-bsre">使用整数参数寄存器传递</td>
+    <td class="tg-il3a">标量宽度 &gt; FLEN</td>
+    <td class="tg-il3a">使用整数参数寄存器传递</td>
   </tr>
   <tr>
-    <td class="tg-bsre" rowspan="4">结构体</td>
-    <td class="tg-bsre">结构体只包含一个浮点实数</td>
-    <td class="tg-bsre">与一个独立的浮点实数传递方式相同</td>
+    <td class="tg-il3a" rowspan="4">结构体</td>
+    <td class="tg-il3a">结构体只包含一个浮点实数</td>
+    <td class="tg-il3a">与一个独立的浮点实数传递方式相同</td>
   </tr>
   <tr>
-    <td class="tg-bsre" rowspan="2">结构体只包含2个浮点实数</td>
-    <td class="tg-bsre">若2个浮点实数宽度 &lt;= FLEN，且有2个浮点参数寄存器可用，通过寄存器传递</td>
+    <td class="tg-il3a" rowspan="2">结构体只包含2个浮点实数</td>
+    <td class="tg-il3a">若2个浮点实数宽度 &lt;= FLEN，且有2个浮点参数寄存器可用，通过寄存器传递</td>
   </tr>
   <tr>
-    <td class="tg-bsre">否则通过整数参数寄存器传递</td>
+    <td class="tg-il3a">否则通过整数参数寄存器传递</td>
   </tr>
   <tr>
-    <td class="tg-bsre">结构体只包含一个整数一个浮点实数</td>
-    <td class="tg-bsre">如果可用，可以通过一个整数参数寄存器+一个浮点参数寄存器传递，否则通过整数参数寄存器传递</td>
+    <td class="tg-il3a">结构体只包含一个整数一个浮点实数</td>
+    <td class="tg-il3a">如果可用，可以通过一个整数参数寄存器+一个浮点参数寄存器传递，否则通过整数参数寄存器传递</td>
   </tr>
-</tbody>
-</table>
+</tbody></table>
 
 * 进程的虚拟地址空间布局
 ```markdown
@@ -503,9 +501,7 @@ LoongArch参数传递规则：
       + ------------------------ +
       |                          | 低地址
       + ------------------------ +
-
-```                
-
+```
 
 * 使用 `ll` + `sc` 指令实现“测试并设置”
 ```asm
@@ -1250,9 +1246,9 @@ i=1/2时，由于TLB项数不足不命中，故产生重填异常 $2*2*(128/2)=2
 
 ```c
 for(i=0; i<10; i++)
-       for(j=0; j<10; j++)
-           for(k=0; k<10; k++)
-           {...}
+  for(j=0; j<10; j++)
+    for(k=0; k<10; k++)
+      {...}
 ```
 
 &emsp;&emsp;计算分别使用一位BHT表和使用两位BHT表进行转移猜测时三重循环分别的转移猜测准确率，假设BHT表的初始值均为0。
@@ -1272,36 +1268,33 @@ for(i=0; i<10; i++)
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-3ilp{color:#ffffff;font-family:serif !important;text-align:center;vertical-align:middle}
-.tg .tg-4tjz{color:#ffffff;font-family:serif !important;text-align:left;vertical-align:middle}
+.tg .tg-il3a{border-color:#ffffff;color:#ffffff;text-align:left;vertical-align:top}
 </style>
-<table class="tg">
-<thead>
+<table class="tg"><thead>
   <tr>
-    <th class="tg-3ilp">方面</th>
-    <th class="tg-3ilp">嵌入式基准测试程序</th>
-    <th class="tg-3ilp">桌面基准测试程序</th>
-  </tr>
-</thead>
+    <th class="tg-il3a">方面</th>
+    <th class="tg-il3a">嵌入式基准测试程序</th>
+    <th class="tg-il3a">桌面基准测试程序</th>
+  </tr></thead>
 <tbody>
   <tr>
-    <td class="tg-3ilp">硬件平台</td>
-    <td class="tg-3ilp">嵌入式系统</td>
-    <td class="tg-3ilp">桌面或服务器系统</td>
+    <td class="tg-il3a">硬件平台</td>
+    <td class="tg-il3a">嵌入式系统</td>
+    <td class="tg-il3a">桌面或服务器系统</td>
   </tr>
   <tr>
-    <td class="tg-3ilp">系统资源</td>
-    <td class="tg-4tjz">嵌入式系统的资源有限，因此嵌入式基准测试程序需要更高效的代码和更小的内存占用。</td>
-    <td class="tg-4tjz">桌面基准测试程序可以使用更多的系统资源，因此可以测试更复杂的应用程序和算法。</td>
+    <td class="tg-il3a">系统资源</td>
+    <td class="tg-il3a">嵌入式系统的资源有限，因此嵌入式基准测试程序需要更高效的代码和更小的内存占用。</td>
+    <td class="tg-il3a">桌面基准测试程序可以使用更多的系统资源，因此可以测试更复杂的应用程序和算法。</td>
   </tr>
   <tr>
-    <td class="tg-3ilp">测试场景</td>
-    <td class="tg-4tjz">嵌入式基准测试程序通常测试嵌入式系统的<span style="font-weight:bold">实时性能</span>，如启动速度、响应时间和功耗等</td>
-    <td class="tg-4tjz">桌面基准测试程序通常测试<span style="font-weight:bold">计算性能</span>，如CPU、GPU和内存的性能</td>
+    <td class="tg-il3a">测试场景</td>
+    <td class="tg-il3a">嵌入式基准测试程序通常测试嵌入式系统的<span style="font-weight:bold">实时性能</span>，如启动速度、响应时间和功耗等</td>
+    <td class="tg-il3a">桌面基准测试程序通常测试<span style="font-weight:bold">计算性能</span>，如CPU、GPU和内存的性能</td>
   </tr>
 </tbody>
 </table>
