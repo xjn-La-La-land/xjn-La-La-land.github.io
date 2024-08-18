@@ -174,7 +174,7 @@ comments: false
 
 * 流程控制语句
     * 辅助控制语句：
-    ```markdown
+    ```
                    C 语言控制流语句            汇编代码
                 goto, break, continue    b 无条件跳转指令
                 return                   返回值写入，jr $ra(ret)
@@ -211,11 +211,11 @@ comments: false
 ##### 异常处理流程
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-096r{color:#000000;text-align:left;vertical-align:top}
+.tg .tg-096r{color:#ffffff;text-align:left;vertical-align:top}
 </style>
 <table class="tg"><thead>
   <tr>
@@ -391,9 +391,9 @@ LoongArch参数传递规则：
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
 .tg .tg-bsre{border-color:#ffffff;color:#ffffff;text-align:left;vertical-align:middle}
 </style>
@@ -479,44 +479,46 @@ LoongArch参数传递规则：
 </table>
 
 * 进程的虚拟地址空间布局
+```markdown
+       __________________________
+      |                          | 高地址
+      + ------------------------ +
+      |            栈            |
+      + ------------------------ +
+      |            \/            |
+      |                          |
+      + ------------------------ +
+      |         动态链接库        |
+      + ------------------------ +
+      |                          |
+      |            /\            |
+      + ------------------------ +
+      |            堆            |
+      + ------------------------ +
+      |     未初始化数据(bss)     | 初始化为0      
+      + ------------------------ +
+      |     未初始化数据(data)    | 从程序文件装入 
+      + ------------------------ +
+      |       程序代码(text)      |
+      + ------------------------ +
+      |                          | 低地址
+      + ------------------------ +
 
-```
-                        __________________________
-                       |                          | 高地址
-                       + ------------------------ +
-                       |            栈            |
-                       + ------------------------ +
-                       |            \/            |
-                       |                          |
-                       + ------------------------ +
-                       |         动态链接库        |
-                       + ------------------------ +
-                       |                          |
-                       |            /\            |
-                       + ------------------------ +
-                       |            堆            |
-                       + ------------------------ +
-                       |     未初始化数据(bss)     | 初始化为0      
-                       + ------------------------ +
-                       |     未初始化数据(data)    | 从程序文件装入 
-                       + ------------------------ +
-                       |       程序代码(text)      |
-                       + ------------------------ +
-                       |                          | 低地址
-                       + ------------------------ +
-```                   
+```                
+
 
 * 使用 `ll` + `sc` 指令实现“测试并设置”
-<pre>
+```asm
 	la.local $a0, lock
 test_and _set:
 	ll.w     $v0, $a0, 0
 	li       $t0, 0x1
 	sc.w     $t0, $a0, 0
 	beqz     $t0, test_and _set
-</pre>
+```
+
 * 使用 `ll` + `sc` 指令实现自旋锁
-<pre>
+```asm
 	la.local $a0, lock
 selfspin:
 	ll.w     $t0, $a0, 0
@@ -526,7 +528,7 @@ selfspin:
 	beqz     $t1, selfspin
 	<\Critical section>
 	st.w     $zero, lock
-</pre>
+```
 
 
 ## 第5章：计算机组成原理与结构
@@ -677,9 +679,9 @@ SATA、 PCIE、HT等都是串行总线。
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
 .tg .tg-8jgo{border-color:#ffffff;text-align:center;vertical-align:top}
 </style>
@@ -1270,12 +1272,12 @@ for(i=0; i<10; i++)
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg td{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+.tg th{border-color:#ffffff;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
   font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-3ilp{color:#000000;font-family:serif !important;text-align:center;vertical-align:middle}
-.tg .tg-4tjz{color:#000000;font-family:serif !important;text-align:left;vertical-align:middle}
+.tg .tg-3ilp{color:#ffffff;font-family:serif !important;text-align:center;vertical-align:middle}
+.tg .tg-4tjz{color:#ffffff;font-family:serif !important;text-align:left;vertical-align:middle}
 </style>
 <table class="tg">
 <thead>
