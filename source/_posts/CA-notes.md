@@ -363,6 +363,7 @@ void translate(Access access, unsigned long long &paddr) {
 ## 第4章：软硬件协同
 
 &emsp;&emsp;LoongArch ABI
+
    | 寄存器编号 | 助记符    | 使用约定                                 |
    |:-----------|:----------|:-----------------------------------------|
    | 0          | `zero`    | 总是为0                                  |
