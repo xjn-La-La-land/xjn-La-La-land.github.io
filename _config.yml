@@ -105,3 +105,11 @@ theme: redefine
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
+
+all_minifier: false
+
+mathjax: 
+  enable: true
+  # 是不是没页都使用mathjax
+  per_page: false

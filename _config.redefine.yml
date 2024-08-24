@@ -436,6 +436,7 @@ plugins:
   mermaid:
     enable: true # enable mermaid or not
     version: "9.3.0" # default v9.3.0
+
 # PLUGINS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
 
@@ -453,7 +454,7 @@ page_templates:
 # Docs: https://redefine-docs.ohevan.com/cdn
 cdn:
   # Whether to enable CDN
-  enable: false
+  enable: true
   # CDN Provider
   provider: npmmirror # npmmirror, zstatic, sustech, staticfile, bootcdn, cdnjs, jsdelivr, unpkg, custom
   # Custom CDN URL

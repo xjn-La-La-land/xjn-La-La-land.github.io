@@ -4,6 +4,7 @@ date: 2024-08-19 14:39:23
 tags: CS-notes
 comments: false
 excerpt: NPC中icache的参数配置与性能优化
+mathjax: true
 ---
 
 # **一生一芯**双周分享汇报 —— **NPC**中**icache**的参数配置与性能优化
