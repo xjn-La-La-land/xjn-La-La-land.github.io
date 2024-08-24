@@ -869,6 +869,7 @@ SATA、 PCIE、HT等都是串行总线。
 * 2个例子：pai的计算和矩阵乘法
 
 * pthread实现：
+
 ```c
 #include <stdlib.h>
 #include <stdio.h>
