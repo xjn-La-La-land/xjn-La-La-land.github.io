@@ -1,7 +1,7 @@
 ---
 title: be right back
 date: 2025-02-23 22:51:47
-tags: simething to think about
+tags: something to think about
 excerpt: 《黑镜》be right back 观后感
 ---
 
