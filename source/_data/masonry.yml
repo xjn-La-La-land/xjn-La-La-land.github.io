@@ -1,3 +1,23 @@
-- image: https://picsum.photos/id/12/2500/1800
-  title: Lorem ipsum
-  description: Lorem ipsum dolor sit amet
+# - image: https://picsum.photos/id/12/2500/1800
+#   title: Lorem ipsum
+#   description: Lorem ipsum dolor sit amet
+
+- image: /images/album/IMG_1045.JPG
+- image: /images/album/IMG_1448.JPG
+- image: /images/album/IMG_1638.JPG
+- image: /images/album/IMG_1682.JPG
+- image: /images/album/IMG_1789.JPG
+- image: /images/album/IMG_2315.JPG
+- image: /images/album/IMG_2564.JPG
+- image: /images/album/IMG_2757.JPG
+- image: /images/album/IMG_2917.JPG
+- image: /images/album/IMG_2955.JPG
+- image: /images/album/IMG_3015.JPG
+- image: /images/album/IMG_3073.JPG
+- image: /images/album/IMG_3105.JPG
+- image: /images/album/IMG_3127.JPG
+- image: /images/album/IMG_3148.JPG
+- image: /images/album/IMG_3096.JPG
+- image: /images/album/IMG_2948.JPG
+- image: /images/album/IMG_0985.JPG
+
