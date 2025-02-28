@@ -442,6 +442,8 @@ plugins:
     enable: true # enable mermaid or not
     version: "9.3.0" # default v9.3.0
 
+  all_minifier: true
+
 # PLUGINS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
 
@@ -475,4 +477,4 @@ developer:
   enable: false
 # DEVELOPER MODE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
-# version_check: false
+version_check: true
