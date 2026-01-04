@@ -442,7 +442,7 @@ plugins:
     enable: true # enable mermaid or not
     version: "9.3.0" # default v9.3.0
 
-  all_minifier: true
+  # all_minifier: true
 
 # PLUGINS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
