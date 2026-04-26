@@ -404,20 +404,58 @@ inject:
             fontCache: 'global'
           }
         };
-        window.addEventListener('load', function () {
+        (function () {
+          var pendingTypeset = false;
+
           function typesetMath() {
-            if (window.MathJax && window.MathJax.typesetPromise) {
-              window.MathJax.typesetPromise();
+            var container = document.querySelector('#swup') || document.body;
+            if (!window.MathJax || !window.MathJax.typesetPromise) return;
+
+            var run = function () {
+              if (window.MathJax.typesetClear) {
+                window.MathJax.typesetClear([container]);
+              }
+              return window.MathJax.typesetPromise([container]).catch(function (error) {
+                console.error('MathJax typeset failed:', error);
+              });
+            };
+
+            if (window.MathJax.startup && window.MathJax.startup.promise) {
+              window.MathJax.startup.promise.then(run);
+            } else {
+              run();
             }
           }
-          document.addEventListener('swup:contentReplaced', typesetMath);
-          if (window.swup && window.swup.hooks && window.swup.hooks.on) {
-            window.swup.hooks.on('content:replace', typesetMath);
+
+          function scheduleTypeset() {
+            if (pendingTypeset) return;
+            pendingTypeset = true;
+            requestAnimationFrame(function () {
+              setTimeout(function () {
+                pendingTypeset = false;
+                typesetMath();
+              }, 0);
+            });
           }
-          if (window.swup && window.swup.on) {
-            window.swup.on('contentReplaced', typesetMath);
+
+          function bindSwup(swup) {
+            if (!swup || !swup.hooks || swup.__mathjaxBound) return;
+            swup.__mathjaxBound = true;
+            swup.hooks.on('page:view', scheduleTypeset);
+            swup.hooks.on('content:replace', scheduleTypeset);
           }
-        });
+
+          window.addEventListener('load', scheduleTypeset);
+          window.addEventListener('redefine:page:refresh', scheduleTypeset);
+          window.addEventListener('redefine:swup:ready', function (event) {
+            bindSwup(event.detail && event.detail.swup);
+            scheduleTypeset();
+          });
+
+          if (window.swup) {
+            bindSwup(window.swup);
+          }
+        })();
       </script>
       <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     -

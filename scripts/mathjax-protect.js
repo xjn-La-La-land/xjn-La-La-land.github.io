@@ -51,7 +51,9 @@ function startsFence(text, index) {
 }
 
 function startsIndentedCode(text, index) {
-  return text[index] === '\t' || /^( {4,})/.test(text.slice(index));
+  const line = text.slice(index, text.indexOf('\n', index) === -1 ? text.length : text.indexOf('\n', index));
+  if (/^[ \t]*(?:[-+*]|\d+\.)\s+/.test(line)) return false;
+  return text[index] === '\t' || /^( {4,})/.test(line);
 }
 
 function isValidInlineDollar(text, start, end) {

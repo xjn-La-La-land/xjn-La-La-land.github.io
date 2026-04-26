@@ -852,24 +852,24 @@ graph TD
   - 生成: $\emptyset$
   - 杀死: $\emptyset$
 
-**3. 迭代计算 ($In$ 和 $Out$)**
+**3. 迭代计算 (\(In\) 和 \(Out\))**
 
-- **初始化**: $In[1]=Out[1]=\emptyset$; 其他 $In = Out = U=\{e_1\}$。
+- **初始化**: \(In[1]=Out[1]=\emptyset\); 其他 \(In = Out = U=\{e_1\}\)。
 - **Round 1**:
-  - **B1**: $Out[1] = \emptyset$
+  - **B1**: \(Out[1] = \emptyset\)
   - **B2** (Pred: B1, B3):
-    - $In[2] = Out[1] \cap Out[3] = \emptyset \cap \{e_1\} = \emptyset$
+    - \(In[2] = Out[1] \cap Out[3] = \emptyset \cap \{e_1\} = \emptyset\)
     - *(解释：虽然 B3 可能会产生表达式（假设），但 B1 这一路过来肯定没有 `x+y`，既然是 Must 分析，只要有一路没有，结果就是没有)*。
-    - $Out[2] = (\emptyset \setminus \emptyset) \cup \{e_1\} = \{e_1\}$
+    - \(Out[2] = (\emptyset \setminus \emptyset) \cup \{e_1\} = \{e_1\}\)
   - **B3** (Pred: B2):
-    - $In[3] = Out[2] = \{e_1\}$
-    - $Out[3] = (\{e_1\} \setminus \{e_1\}) \cup \emptyset = \emptyset$
+    - \(In[3] = Out[2] = \{e_1\}\)
+    - \(Out[3] = (\{e_1\} \setminus \{e_1\}) \cup \emptyset = \emptyset\)
     - *(解释：B3 修改了 x，把表达式杀死了)*。
   - **B4** (Pred: B2):
-    - $In[4] = Out[2] = \{e_1\}$
+    - \(In[4] = Out[2] = \{e_1\}\)
 - **Round 2** (检查 B2):
   - **B2** (Pred: B1, B3):
-    - $In[2] = Out[1] \cap Out[3] = \emptyset \cap \emptyset = \emptyset$.
+    - \(In[2] = Out[1] \cap Out[3] = \emptyset \cap \emptyset = \emptyset\).
   - **结论**：在 B2 的入口，表达式 `x+y` **不可用**。
 
 ---
