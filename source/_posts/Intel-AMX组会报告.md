@@ -13,7 +13,7 @@ mathjax: true
 
 ### 基本结构
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=ZDRjODk2MGNkNThhNzZiZDg0NGEzMTIxODliM2M3NzdfeU5zN01SUkI1REEwSkQ4bnVOTkR0MlNZWUtVZGVNaXFfVG9rZW46Q2Via2JVWkE0b2xXdTN4VERkZGNEZU9ybmRnXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/01-amx-basic-structure.png)
 
 1. Tile寄存器：8个二维矩阵寄存器，每个Tile寄存器最大容量为16行×64B=1KB；、
 2. Tile控制寄存器（TILECFG）：存储每个Tile启用的行数和列数；
@@ -50,9 +50,15 @@ TMUL单元每16 cycle能计算一次Tile点积累加（一条TDP指令），所�
 
 1. AMX指令内联汇编：提供了[Intrinsics接口](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html)
 
-   1. | 1234567 | TDPBSSDTDPBSUDTDPBUSDTDPBUUDTILELOADDTILELOADDT1TILESTORED | **void** _tile_dpbssd(__tile dst, __tile src1,   __tile src2);**void** _tile_dpbsud(__tile dst, __tile src1,   __tile src2);**void** _tile_dpbusd(__tile dst, __tile src1,   __tile src2);**void** _tile_dpbuud(__tile dst, __tile src1,   __tile src2);**void** _tile_loadd(__tile dst, **const** **void** *base, **int** stride);**void** _tile_stream_loadd(__tile dst, **const** **void** *base, **int** stride);**void** _tile_stored(__tile src, **void** *base, **int** stride); |
-      | ------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-      |         |                                                            |                                                              |
+   | 指令 | Intrinsic |
+   | ---- | --------- |
+   | TDPBSSD | `void _tile_dpbssd(__tile dst, __tile src1, __tile src2);` |
+   | TDPBSUD | `void _tile_dpbsud(__tile dst, __tile src1, __tile src2);` |
+   | TDPBUSD | `void _tile_dpbusd(__tile dst, __tile src1, __tile src2);` |
+   | TDPBUUD | `void _tile_dpbuud(__tile dst, __tile src1, __tile src2);` |
+   | TILELOADD | `void _tile_loadd(__tile dst, const void *base, int stride);` |
+   | TILELOADDT1 | `void _tile_stream_loadd(__tile dst, const void *base, int stride);` |
+   | TILESTORED | `void _tile_stored(__tile src, void *base, int stride);` |
 
 2. 矩阵运算算子库：[Intel oneAPI](https://www.intel.com/content/www/us/en/docs/oneapi/installation-guide-linux/2025-1/base-online-offline.html#BASE-ONLINE-OFFLINE)中的MKL库(Math Kernel Library)提供了很多算子，如GEMM算子：`cblas_gemm_s8u8s32`, `cblas_gemm_s16s16s32`, `cblas_gemm_bf16bf16f32`, `cblas_gemm_f16f16f32`
 
@@ -74,14 +80,14 @@ TMUL单元每16 cycle能计算一次Tile点积累加（一条TDP指令），所�
 - 在IQ3中控制AMX指令顺序发射，从而保证AMX指令顺序执行；
 - 内存一致性如何保证？在Dispatch流水级，检查TILELOADDT1/TILESTORED指令和其他访存指令是否同时出现在ROB中，如果出现，则将后面一条指令阻塞在Dispatch级，直到前一条指令提交（并且sbuffer排空）。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjlhMzM5NmNiZjFlY2ZmNjMxNzQyNzAxZDQxYjhkZDlfWEFtaFVsckV3c1EzMFh0bHdqbG5UWWJkRjhoMUZ6OERfVG9rZW46SzBxNGIxREEwb2ZqTnp4RDVOd2NhakRNbkRnXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/02-xiangshan-control-path.png)
 
 ### 访存通路
 
 - TILELOADDT1：TMU连接到l2-cache的TileLink总线，发送Get请求读数据；
 - TILESTORED：TMU连接到sbuffer，将数据先写入sbuffer，然后由sbuffer管理并写入dcache。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=MDRiN2Y1ZjZhODgzNDk3N2Y5M2IzNDc5NmU0ZjM1NjJfS1FZMFl2dDlwd1hmeTl1MG5CNzZxVjV6TE0zcHBJWGFfVG9rZW46QWFvYWJIcFc3b0ROQUx4YjFXS2NQSXZSbjBiXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/03-xiangshan-memory-path.png)
 
 ### TMU单元微结构
 
@@ -89,7 +95,7 @@ TMUL单元每16 cycle能计算一次Tile点积累加（一条TDP指令），所�
 - TDPUnit：16×16个点积累加单元（DPAUnit）构成的脉动阵列，计算tileA × tileB + tileC。可以实现17 cycle的TDP吞吐；
 - TLSUnit：用于管理AMX访存请求的循环队列，TILELOADDT1/TILESTORED按行拆分成16个请求进入队列。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=YWQ5ZDAyZjBlMzY5OGYzMDhhZjQ4YjIwYmUwZWFhODBfMjRQMmp4ekcwam56bU44SjQySEJoRGVlbkFkRWh2ZjZfVG9rZW46S2dkSWJZZzFibzQ4b0d4M0N1SmNhM2t5bmNlXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/04-tmu-microarchitecture.png)
 
 ## GEMM算子的性能分析与优化
 
@@ -103,7 +109,7 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
    3. 2x2 blocking: `2A*2B=>4C`, 4/4 tileload per TDP
    4.  由于Tile寄存器数量的限制，2A2B4C的寄存器分配就是最优的方案了。
 
-   5. ![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=ZTVlY2QxMzA5N2JhM2UxZDdhOTA5YTkyYmJhZjNiNmZfNTNUS1dCakVQS1VpSmV4TDFTTHZnbWY1QU1NUzBqcEZfVG9rZW46VFdlWmJtZmRjb0lXSG14dXE2dmN3QWhDbjRnXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+   5. ![img](/images/intel-amx/05-register-blocking.png)
 
    6.  这样GEMM的三层循环结构如下：
 
@@ -114,7 +120,7 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
    9. 对矩阵A，会重复多次访问32×K的一块数据。我们希望A的数据直接驻留在L1-D中，用TILELOADD来加载tileA；
    10. 对矩阵B，整个B的数据会被顺序访问，我们希望B的数据能在L2中驻留，用TILELOADDT1加载tileB；
 2. Cache Blocking：矩阵规模增大时，Cache容量不足导致Cache miss增加。所以在GEMM三层循环外再加上一层分块，使得分块大小与L1-D/L2容量匹配。
-   1. ![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGJmOTI0N2MyNWEzOWFlYmVjYTg5ODM5MGY3NDU5NGZfVGpQWWJuakxXSndpRWlGNnA4OXFpdWVGZWJnMlpzZzhfVG9rZW46Q3ZFWWJMeXlQb3FNUFJ4elA1cGN2SzNtbmJoXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+   1. ![img](/images/intel-amx/06-cache-blocking.png)
 
    2.  经过实际测试，TN=512, TK=1472是一个比较好的Cache分块大小，而M方向是否分块对性能没有明显影响。此时A分块大小32×TK=46KB，能够将 L1-D(48KB) 充分利用；B分块大小TN×TK=736KB，能保证fit in L2(2MB).
 3. Packing：如果tileload加载的矩阵分块每一行在内存中紧密排列，就能获得更好的tileload性能（**Strided tileload is slower than dense/compat tileload**）。我们在缓冲区中，将矩阵A, B的数据按照访问顺序重新排列，使得每一次tileload可以访问连续的1KB数据。
@@ -126,15 +132,15 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 
 - M↑, N=TN=512, K=TK=1472，利用率能稳定在75%.
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=YTExYTZiYmI3NjA3ZmIxZjQ5ZWRhZmQ3YTJjZjgxZjdfN0RBcE96eFVLRWJldEZTRjdyNFh0b21ab0xVaE9hM0xfVG9rZW46Rlk1MWJuZDVwb1ZVNFZ4eEwwN2NiMDd4bkVlXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/07-single-core-m-fixed.png)
 
 - M↑, N=TN=512, K↑，fit in L3时，利用率能稳定在 70%；overflow L3时，下降到65%。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=YTM0NzVjYzY4MWM0NDE0YmQ4ZDM4OWQwNWRiMmQxMjFfMHRtaHVEdjZTc3hjMHVVRjl1dkNHVHplaTB4N2ZKOFBfVG9rZW46VW9HTGJRZXdXb2o3T294YW1OTmNoU0ZmbkJoXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/08-single-core-k-sweep.png)
 
 - M↑, N↑, K↑，fit in L3时，利用率能稳定在 68%；overflow L3时，下降到65%。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=YzkwZjRmM2JmYWZkYjE1N2EwMjU3ZmQ5YjAyMGRiODRfZlREZ1Bpc0g5SWtKSHFGaG9LemU4djN1QWZSclNnNHZfVG9rZW46QjJjamJPMGZRb0VHU0Z4U0tVeWNxN0dvbkplXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/09-single-core-large-sweep.png)
 
 我们基本清楚了在单核心场景下，面对不同的矩阵规模，限制AMX利用率的各种因素。总结在下表中（表格中AMX的利用率是我们优化后能够达到的最好表现）
 
@@ -157,7 +163,7 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 - 一方面，分块粒度（TM, TN）不能太大，否则很可能每个核计算任务不均匀；
 - 另一方面，分块粒度（TM, TN）也不能太小，否则单核心的效率会太低。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=YjUyNDYyZTg3Yzg3MzE1YzMzMDFjZTllZTlhMDUyYzBfWjVFMFdSREd0ZVB1YjQ3S0Y5QkNjNGVkOVVRc016RlpfVG9rZW46SzRHUGJrbU9Kb2N1aHd4TG9lZWNnYjdXblRnXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/10-multicore-blocking.png)
 
 ### 针对NUMA结构优化
 
@@ -165,9 +171,9 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 
 具体而言，我们将矩阵B在每个NUMA结点内存中复制一份，而矩阵A, C在M方向拆分，分配到各个NUMA结点上。（类似于用空间换时间？）
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=M2MwYmZlZTczYTAzY2FhOGRjNDc5NWMzOWVjNDkxZWFfN25qOWU5bmRkQnFMcTQzcDZrRTg1VkNENWtYRHQ0QXVfVG9rZW46UkpKWWI1a2ZGb0ozUHl4UFZvOGNpdklvbnZoXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/11-numa-data-layout.png)
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=MTZlNjk0MjYyOGIyMTAyM2RjYjk4MWUzMjk3MDMyMjhfYWlyR0JlVUt2cGkwNlFPaWlSUDZJN1ZjMkxmUVJzRWJfVG9rZW46Sjl2NmJyOVR3b1RtSkJ4ajViRmNkZzBTblZkXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/12-numa-performance.png)
 
 目前在多核+多NUMA结点下，手写GEMM算子对AMX的利用率在30%~40%。主要受到**DDR/L3的带宽**限制，而且相比单核，多核场景下L3带宽限制会更加严重。
 
@@ -196,7 +202,7 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 
 暂时无法在飞书文档外展示此内容
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=ZjA1ZjZkZDQxOTg1N2FiNmM3YTMxMzZlOWFkOWY4NDBfZFNBWWRBbFJpOHdHYkhkOW13b2s5YldSYWVRU1BJRTJfVG9rZW46VUhEdmJVTldSb1ZLdHl4Z0RSYWNNRDlGbkFjXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/13-llama-prefill-baseline.png)
 
 在INT8上，AMX的计算部件峰值性能是2048 op/cycle，而AVX512 VNNI是256 op/cycle，**AMX理论性能约为AVX512 VNNI 的8倍。**但是我们测出来AMX的加速性在单核时只有AVX512的2倍左右，而且随着核数增加，性能提升会变缓，在64核时甚至只有AVX512的不到1.5倍，显然AMX的利用率是不太理想的。
 
@@ -204,7 +210,7 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 
 我们发现llama.cpp的AMX GEMM算子有几个问题可能会影响整体的性能：
 
-1. 对于Q8_0等量化类型，由于BLOCK_K=32，导致A的分块大小是16*32，B的分块大小是8*64，都只使用了一半的tile寄存器。这样相当于一条tdp指令只有1/4的计算是有效的，这会导致AMX利用率明显下降；
+1. 对于Q8_0等量化类型，由于BLOCK_K=32，导致A的分块大小是16x32，B的分块大小是8x64，都只使用了一半的tile寄存器。这样相当于一条tdp指令只有1/4的计算是有效的，这会导致AMX利用率明显下降；
 2. INT8算子无法直接在Tile寄存器上累加结果，需要频繁的tilestore将结果搬到内存；而且GEMM循环中还插入了对结果的反量化和累加计算，带来额外的开销。
 3. 在计算之前，输入A需要从float32转换成Q8_0量化类型，并且这个转换没有做并行优化；
 
@@ -217,11 +223,11 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 
 最后，将上面的手写GEMM算子接入到这里。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=MGM4ODJhMTE5MDdiMDViODEzY2Q0MjQ5ODQ5YmY3YmJfTWZrcnhRQVhOR2dSQzZrYTVhalRYUjFLNkw1TVp1cXhfVG9rZW46STZUY2J4QWdWb0dld014cnNCVGNqdEhabkdjXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/14-llama-bf16-kernel.png)
 
 我们的AMX BF16算子相比原始的INT8算子有明显的性能提升。在核数比较少的时候能达到AVX512算子性能的4~5倍。**但是，AMX算子的多核扩展性不好，**AMX的多核加速比明显低于AVX256和AVX512.
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=NmU3NDU5OTVkMTMxOWViYmIwZDFmZjcwZDFmODRjZWNfTmtXM084d1gwcDdKNTJrTnpaWWZHcFdLcWZlMnU3MVRfVG9rZW46UVlYaWJYTlE2b0RjS2h4cUpNTGMxR3Y5bkpoXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/15-llama-bf16-speedup.png)
 
 目前还需要解决几个问题：
 
@@ -234,4 +240,4 @@ Intel oneMKL库的GEMM算子，在我们的测试中，无论是单核还是多�
 
 因为ktransformers不支持在纯CPU环境上运行，所以只简单测试了其中AMX GEMM算子的性能。
 
-![img](https://pcn7jbsuk8nv.feishu.cn/space/api/box/stream/download/asynccode/?code=YmM1MzFmMmE2YzIyN2U0Yzk0MDBjNGM2N2ExN2M0ZmZfODlyM0dzV3JRNlJscEh6NGNvNXI5a3R1OWdsYnFmRHdfVG9rZW46UVA0RWI3OVBHbzNXekt4RE1iY2N2NGlxbmRnXzE3NTgxOTg5NjA6MTc1ODIwMjU2MF9WNA)
+![img](/images/intel-amx/16-ktransformers-amx-gemm.png)

@@ -82,7 +82,10 @@ global:
   # Whether to enable Preloader.
   preloader: true
   # Whether to enable open graph
-  open_graph: true
+  open_graph:
+    enable: true
+    image: /images/redefine-og.webp
+    description: "xiejianan's homepage"
   # Google Analytics
   google_analytics:
     enable: false # Whether to enable Google Analytics
@@ -157,16 +160,14 @@ home_banner:
     style: default # default, reverse, center
     # Social links
     links:
-      github: https://github.com/xjn-La-La-land # your GitHub URL
-      instagram: # your Instagram URL
-      zhihu:  # your ZhiHu URL
-      twitter:  # your twitter URL
-      email: xiejianan21@mails.ucas.ac.cn # your email
-      # ...... # you can add more
+      - icon: github
+        url: https://github.com/xjn-La-La-land
+      - icon: email
+        url: xiejianan21@mails.ucas.ac.cn
     # Social links with QRcode drawers
     qrs:
-      weixin: /images/wechat_profile.jpg # your Wechat QRcode image URL
-      # ...... # you can add more
+      - icon: weixin
+        qr: /images/wechat_profile.jpg
 # HOME BANNER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
 
@@ -388,10 +389,37 @@ footer:
 # Docs: https://redefine-docs.ohevan.com/inject
 inject:
   # Whether to enable inject
-  enable: false
+  enable: true
   # Inject custom head html code
   head: 
-    -
+    - |
+      <script>
+        window.MathJax = {
+          tex: {
+            inlineMath: [['\\(', '\\)']],
+            displayMath: [['\\[', '\\]']],
+            processEscapes: true
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+        window.addEventListener('load', function () {
+          function typesetMath() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+              window.MathJax.typesetPromise();
+            }
+          }
+          document.addEventListener('swup:contentReplaced', typesetMath);
+          if (window.swup && window.swup.hooks && window.swup.hooks.on) {
+            window.swup.hooks.on('content:replace', typesetMath);
+          }
+          if (window.swup && window.swup.on) {
+            window.swup.on('contentReplaced', typesetMath);
+          }
+        });
+      </script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
     -
   # Inject custom footer html code
   footer:
@@ -477,4 +505,4 @@ developer:
   enable: false
 # DEVELOPER MODE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
-version_check: true
+version_check: false

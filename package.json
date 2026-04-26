@@ -6,7 +6,8 @@
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "server": "hexo server"
+    "server": "hexo server",
+    "check:content": "node tools/check-content.js"
   },
   "hexo": {
     "version": "7.3.0"
@@ -29,7 +30,7 @@
     "hexo-server": "^3.0.0",
     "hexo-tag-bilibili": "^0.3.1",
     "hexo-theme-landscape": "^1.0.0",
-    "hexo-theme-redefine": "^2.8.5",
+    "hexo-theme-redefine": "^2.9.0",
     "hexo-wordcount": "^6.0.1",
     "markdown-it-katex": "^2.0.3",
     "nodejieba": "^3.4.1"

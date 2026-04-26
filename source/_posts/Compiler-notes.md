@@ -107,33 +107,33 @@ $$F \rightarrow ( E ) \mid id$$
 
 #### **4. 栈分析过程 (Trace)**
 
-> * **初始状态**：栈底为 \$，栈顶为开始符号 $E$。输入为 `id+id*id$`
+> * **初始状态**：栈底为 `$`，栈顶为开始符号 $E$。输入为 `id+id*id$`
 > * **匹配规则**：
 >   - 栈顶是非终结符：查表，**反向压栈**（例如 $E \rightarrow TE'$，先压 $E'$ 再压 $T$）。
 >   - 栈顶是终结符：与输入匹配，弹出。
 
 **推导过程**：
 
-| **栈 (Stack)**  | **输入 (Input)** | **动作 / 输出 (Output)**  | **解释**                         |
+| 栈 (Stack)      | 输入 (Input)     | 动作 / 输出 (Output)      | 解释                             |
 | --------------- | ---------------- | ------------------------- | -------------------------------- |
-| **$ E**         | **id+id\*id$**   |                           | 初始化                           |
-| **$ E' T**      | **id+id\*id$**   | $E \rightarrow TE'$       | 查表 M[E, id]                    |
-| **$ E' T' F**   | **id+id\*id$**   | $T \rightarrow FT'$       | 查表 M[T, id]                    |
-| **$ E' T' id**  | **id+id\*id$**   | $F \rightarrow id$        | 查表 M[F, id]                    |
-| **$ E' T'**     | **+id\*id$**     | **匹配 id**               | 栈顶终结符匹配                   |
-| **$ E'**        | **+id\*id$**     | $T' \rightarrow \epsilon$ | 查表 M[T', +] (注意这里消去了T') |
-| **$ E' T +**    | **+id\*id$**     | $E' \rightarrow +TE'$     | 查表 M[E', +]                    |
-| **$ E' T**      | **id\*id$**      | **匹配 +**                | 栈顶终结符匹配                   |
-| **$ E' T' F**   | **id\*id$**      | $T \rightarrow FT'$       | 查表 M[T, id]                    |
-| **$ E' T' id**  | **id\*id$**      | $F \rightarrow id$        | 查表 M[F, id]                    |
-| **$ E' T'**     | ***id$**         | **匹配 id**               |                                  |
-| **$ E' T' F *** | ***id$**         | $T' \rightarrow *FT'$     | 查表 M[T', *]                    |
-| **$ E' T' F**   | **id$**          | **匹配 ***                |                                  |
-| **$ E' T' id**  | **id$**          | $F \rightarrow id$        |                                  |
-| **$ E' T'**     | **$**            | **匹配 id**               |                                  |
-| **$ E'**        | **$**            | $T' \rightarrow \epsilon$ | 查表 M[T', $]                    |
-| **$**           | **$**            | $E' \rightarrow \epsilon$ | 查表 M[E', $]                    |
-| **空**          | **空**           | **接受**                  |                                  |
+| `$ E`           | `id+id*id$`      |                           | 初始化                           |
+| `$ E' T`        | `id+id*id$`      | $E \rightarrow TE'$       | 查表 M[E, id]                    |
+| `$ E' T' F`     | `id+id*id$`      | $T \rightarrow FT'$       | 查表 M[T, id]                    |
+| `$ E' T' id`    | `id+id*id$`      | $F \rightarrow id$        | 查表 M[F, id]                    |
+| `$ E' T'`       | `+id*id$`        | **匹配 id**               | 栈顶终结符匹配                   |
+| `$ E'`          | `+id*id$`        | $T' \rightarrow \epsilon$ | 查表 M[T', +] (注意这里消去了T') |
+| `$ E' T +`      | `+id*id$`        | $E' \rightarrow +TE'$     | 查表 M[E', +]                    |
+| `$ E' T`        | `id*id$`         | **匹配 +**                | 栈顶终结符匹配                   |
+| `$ E' T' F`     | `id*id$`         | $T \rightarrow FT'$       | 查表 M[T, id]                    |
+| `$ E' T' id`    | `id*id$`         | $F \rightarrow id$        | 查表 M[F, id]                    |
+| `$ E' T'`       | `*id$`           | **匹配 id**               |                                  |
+| `$ E' T' F *`   | `*id$`           | $T' \rightarrow *FT'$     | 查表 M[T', *]                    |
+| `$ E' T' F`     | `id$`            | **匹配 \***               |                                  |
+| `$ E' T' id`    | `id$`            | $F \rightarrow id$        |                                  |
+| `$ E' T'`       | `$`              | **匹配 id**               |                                  |
+| `$ E'`          | `$`              | $T' \rightarrow \epsilon$ | 查表 M[T', $]                    |
+| `$`             | `$`              | $E' \rightarrow \epsilon$ | 查表 M[E', $]                    |
+| 空              | 空               | **接受**                  |                                  |
 
 ------
 
@@ -898,10 +898,10 @@ graph TD
 
 #### **1. Andersen 分析 (基于子集约束)**
 
-> **Base:   a = &b;  => b ∈ pts(a)**
-> **Assign: a = b;   => pts(b) ⊆ pts(a)**
-> **Store:  *p = b;  => ∀ v ∈ pts(p), pts(b) ⊆ pts(v)** 
-> **Load:   a = *q;  => ∀ v ∈ pts(q), pts(v) ⊆ pts(a)**
+> **Base:** `a = &b`; => $b \in pts(a)$
+> **Assign:** `a = b`; => $pts(b) \subseteq pts(a)$
+> **Store:** `*p = b`; => $\forall v \in pts(p), pts(b) \subseteq pts(v)$
+> **Load:** `a = *q`; => $\forall v \in pts(q), pts(v) \subseteq pts(a)$
 >
 > 核心思想：赋值 `x = y` 意味着 **$pts(y) \subseteq pts(x)$** (y 指向的东西，x 也要指向)。
 >
@@ -929,10 +929,10 @@ graph TD
 
 #### **2. Steensgaard 分析 (基于等价类/合并)**
 
-> **Base:   a = & b;  => b ∈ pts(a)**
-> **Assign: a = b;    => pts(b) = pts(a)**
-> **Store:  *p = b;   => ∀ v ∈ pts(p), pts(b) = pts(v)**
-> **Load:   a = *q;   => ∀ v ∈ pts(q), pts(v) = pts(a)**
+> **Base:** `a = &b`; => $b \in pts(a)$
+> **Assign:** `a = b`; => $pts(b) = pts(a)$
+> **Store:** `*p = b`; => $\forall v \in pts(p), pts(b) = pts(v)$
+> **Load:** `a = *q`; => $\forall v \in pts(q), pts(v) = pts(a)$
 >
 > 核心思想：赋值 `x = y` 意味着 **$pts(y) = pts(x)$** (强行让它们指向同一个集合)。
 >

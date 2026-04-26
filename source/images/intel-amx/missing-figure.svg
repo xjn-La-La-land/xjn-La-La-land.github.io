@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Intel AMX figure pending restore</title>
+  <desc id="desc">The original Feishu temporary image link has expired. Replace this placeholder with the exported source image.</desc>
+  <rect width="1200" height="675" rx="18" fill="#f6f7f9"/>
+  <rect x="36" y="36" width="1128" height="603" rx="14" fill="#ffffff" stroke="#d7dce3" stroke-width="3" stroke-dasharray="14 12"/>
+  <path d="M526 278h148v104H526z" fill="#e9edf3" stroke="#aab3c0" stroke-width="5"/>
+  <path d="M526 382l42-48 34 34 24-28 48 42" fill="none" stroke="#8d98a8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="638" cy="312" r="14" fill="#8d98a8"/>
+  <text x="600" y="456" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#354052">Intel AMX figure pending restore</text>
+  <text x="600" y="502" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#687386">Original Feishu asynccode image link returned HTTP 400.</text>
+  <text x="600" y="542" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#687386">Export the image from the source document and replace this placeholder.</text>
+</svg>
