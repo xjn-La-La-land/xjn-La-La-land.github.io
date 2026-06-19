@@ -394,7 +394,12 @@ inject:
   head: 
     - |
       <script>
-        window.MathJax = {
+        // Use existing instance if present: on swup (single_page) navigation the
+        // scripts plugin re-executes this inline config in <head>. A bare
+        // `window.MathJax = {...}` would overwrite the already-loaded MathJax API
+        // (typesetPromise/startup) with just the config object, so math would stay
+        // raw \(...\) until a full reload. `|| ` keeps the loaded API intact.
+        window.MathJax = window.MathJax || {
           tex: {
             inlineMath: [['\\(', '\\)']],
             displayMath: [['\\[', '\\]']],
