@@ -75,13 +75,13 @@ mathjax: true
 
   > 设 $x = \begin{bmatrix} x^{(1)} , x^{(2)} \end{bmatrix} \in \mathbb{R}^{2B}$，其中 $x^{(1)}, x^{(2)} \in \mathbb{R}^B$。
   >
-  > 1) 合并最大值：$$m(x) = \max\left(m(x^{(1)}),\ m(x^{(2)})\right)$$ ——这是显然的，全局最大值等于两段最大值取最大。
+  > 1) 合并最大值：$m(x) = \max\left(m(x^{(1)}),\ m(x^{(2)})\right)$ ——这是显然的，全局最大值等于两段最大值取最大。
   >
   > 2) 合并指数向量 $f$。
   >
   >    对第一段元素，
   >
-  >    - $$f(x)_i = e^{x_i^{(1)} - m(x)}$$ （注意 $m(x)$ 是全局最大）
+  >    - $f(x)_i = e^{x_i^{(1)} - m(x)}$ （注意 $m(x)$ 是全局最大）
   >    - $f(x^{(1)})_i = e^{x_i^{(1)} - m(x^{(1)})}$
   >    - 因此 $$ f(x)_i = e^{x_i^{(1)} - m(x^{(1)})} \cdot e^{m(x^{(1)}) - m(x)} = f(x^{(1)})_i \cdot e^{m(x^{(1)}) - m(x)}$$
   >
@@ -92,9 +92,7 @@ mathjax: true
   > 3. 合并归一化因子 $\ell$
   >
   >    对 $f(x)$ 求和：
-  >    $$
-  >    \boxed{\ell(x) = e^{m(x^{(1)}) - m(x)} \cdot \ell(x^{(1)}) + e^{m(x^{(2)}) - m(x)} \cdot \ell(x^{(2)})}
-  >    $$
+  >    $$\boxed{\ell(x) = e^{m(x^{(1)}) - m(x)} \cdot \ell(x^{(1)}) + e^{m(x^{(2)}) - m(x)} \cdot \ell(x^{(2)})}$$
   >    **这就是关键公式：只需要两段各自的 $(m, \ell)$，就能合并出全局 $(m, \ell)$**，无需看到全部数据。
 
 ### 推广到多块——增量更新
@@ -150,14 +148,12 @@ $$
 
 <img src="/images/flash-attention/image-20260329143829014.png" alt="image-20260329143829014" style="zoom:33%;" />
 
-> 矩阵 $$Q$$ 的第 $$i$$ 行 $$q_i$$ 表示第 $i$ 个 token 的 query 向量；
+> 矩阵 $Q$ 的第 $i$ 行 $q_i$ 表示第 $i$ 个 token 的 query 向量；
 >
-> 矩阵 $$K$$ 的第 $$j$$ 行 $$k_j$$ 表示第 $j$ 个 token 的 key 向量；
+> 矩阵 $K$ 的第 $j$ 行 $k_j$ 表示第 $j$ 个 token 的 key 向量；
 >
-> 矩阵 $$S$$ 的 $s_{ij} = q_i⋅k_j$ 表示“第 $i$ 个位置去关注第 $j$​ 个位置”时的匹配分数，第 $i$ 行
-> $$
-> [s_{i1},s_{i2},\dots,s_{iN}]
-> $$
+> 矩阵 $$S$$ 的 $s_{ij} = q_i⋅k_j$ 表示”第 $i$ 个位置去关注第 $j$​ 个位置”时的匹配分数，第 $i$ 行
+> $$[s_{i1},s_{i2},\dots,s_{iN}]$$
 > 就是位置 $i$ 对所有位置的注意力打分。
 
 <img src="/images/flash-attention/image-20260329143857647.png" alt="image-20260329143857647" style="zoom:33%;" />
@@ -169,14 +165,12 @@ $$
 > 矩阵 $V$ 的第 $j$ 行 $v_j$ 表示第 $j$ 个位置真正被读取、被聚合的 value 向量；
 >
 > 而输出矩阵 $O$ 的第 $i$ 行
-> $$
-> o_i=\sum_{j=1}^N p_{ij}v_j
-> $$
+> $$o_i=\sum_{j=1}^N p_{ij}v_j$$
 > 对所有 token 的 value 向量使用 token $i$ 的注意力权重加权求和，表示“第 $i$ 个 token 在看完所有可见位置后，融合上下文得到的输出向量”。
 
 ##### 多 head
 
-对于多头自注意力，输入通常先是 $$X\in\mathbb{R}^{N\times d_{\text{model}}}$$
+对于多头自注意力，输入通常先是 $X\in\mathbb{R}^{N\times d_{\text{model}}}$
 
 然后通过三组线性投影得到总的
 $$
@@ -264,7 +258,7 @@ FlashAttention 的双重循环（Algorithm 1: FlashAttention Forward Pass）：
 
 定义符号：处理完前 $t$ 个 $K/V$ 块后，维护的状态是：
   - $m_i^{(t)}$：前 $t$ 块的全局最大值
-  - $\ell_i^{(t)}$：前 $t$ 块的（对齐到 $m_i^{(t)}$ 的）指数和，$$\ell_i^{(t)} = \sum_{k\in 块 1..t}e^{s_{ik} - m_i^{(t)}}$$
+  - $\ell_i^{(t)}$：前 $t$ 块的（对齐到 $m_i^{(t)}$ 的）指数和，$\ell_i^{(t)} = \sum_{k\in 块 1..t}e^{s_{ik} - m_i^{(t)}}$
   - $O_i^{(t)}$：基于前 $t$ 块的当前最佳估计输出，即"假设 $K$ 只有前 $t$ 块，softmax 归一化后的输出"。
 
 $$
@@ -273,9 +267,9 @@ $$
 
 当第 $t+1$ 块到来时，设这块的局部统计量为：
 
-* 第 $t+1$ 块内的行最大值：$$\tilde{m} = \max_{k\in 块 t+1} s_{ik} $$
-* 第 $t+1$ 块内的指数和：$$\tilde{\ell} = \sum_{k\in 块 k+1} e^{s_{ik} - \tilde{m}}$$
-* 未归一化的局部权重，行向量：$$\tilde{P} = \exp(S_{i,t+1} - \tilde{m})$$
+* 第 $t+1$ 块内的行最大值：$\tilde{m} = \max_{k\in 块 t+1} s_{ik}$
+* 第 $t+1$ 块内的指数和：$\tilde{\ell} = \sum_{k\in 块 k+1} e^{s_{ik} - \tilde{m}}$
+* 未归一化的局部权重，行向量：$\tilde{P} = \exp(S_{i,t+1} - \tilde{m})$
 
 步骤一：更新全局最大值和归一化因子（Online Softmax 公式）：
 
@@ -959,9 +953,9 @@ Producer 与 Consumer 之间通过 s-stage 的循环 SMEM 缓冲来配合。
 
 * Consumer 等待该轮的$K_j$/$V_j$ 就绪后，发起 WGMMA，WGMMA 异步完成后，Consumer 也设置对应的 mbarrier 通知 Producer 缓冲区已释放。
 
-* 这就是最经典的 "async_load + mma" pattern。stage-s 的深度取决于 TMA 的延迟，假设 $T_{\text{TMA}}$ 是单次 TMA load 的端到端延迟，$T_{\text{consumer\_iter}}$是consumer iteration 的吞吐时间，
+* 这就是最经典的 "async_load + mma" pattern。stage-s 的深度取决于 TMA 的延迟，假设 $T_{\text{TMA}}$ 是单次 TMA load 的端到端延迟，$T_{\text{consumer-iter}}$是consumer iteration 的吞吐时间，
   $$
-  s \geq \left\lceil \frac{T_{\text{TMA}}}{T_{\text{consumer\_iter}}} \right\rceil
+  s \geq \left\lceil \frac{T_{\text{TMA}}}{T_{\text{consumer-iter}}} \right\rceil
   $$
 
 
@@ -1224,13 +1218,9 @@ FP8 Attention 麻烦的地方在于需要进行 **layout transformation**，这�
   > 那 $PV$ 的结果会错——除非 **$V$ 的行也做对应的置换**。
   >
   > 这里用到了**矩阵乘的一个性质**：
-  > $$
-  > (P \cdot V)_{ij} = \sum_k P_{ik} \cdot V_{kj}
-  > $$
+  > $$(P \cdot V)_{ij} = \sum_k P_{ik} \cdot V_{kj}$$
   > 如果 $P$ 的列从 [0,1,2,...,N-1] 重排为 [σ(0), σ(1), ..., σ(N-1)]，那么 $V$ 的行也按同样的 σ 重排，乘积就保持不变：
-  > $$
-  > \sum_k P_{i, \sigma(k)} \cdot V_{\sigma(k), j} = \sum_k P_{ik} \cdot V_{kj}
-  > $$
+  > $$\sum_k P_{i, \sigma(k)} \cdot V_{\sigma(k), j} = \sum_k P_{ik} \cdot V_{kj}$$
   > **所以其实在 transpose $V_j$ 时，还会进行 $V_j$ 行的 shuffle 来配合 $P_{ij}$ 列的 shuffle.** 这一块具体细节可以看论文。
 
 
@@ -1413,38 +1403,17 @@ Blackwell 最大的架构变化就是引入了 **tensor momory（TMEM）**。TME
 > * `PV`：由 `M × N` 和 `N × d` 的输入计算得到 `M × d` 的输出。
 >
 > 每次 MMA 需要 `2MNd` 次浮点操作。tensor core 吞吐量为每周期 `8192 FLOPs`（这个数值可以从 B200 理论最大 FLOPS 推导得到：`2.25 PFLOPS / 1850 MHz clock speed / 148 SMs = 8192 ops / clock / SM`），总计算时间为：
-> $$
-> T_{\mathrm{MMA}} = \frac{4MNd}{8192}\ \text{cycles}
-> $$
+> $$T_{\mathrm{MMA}} = \frac{4MNd}{8192}\ \text{cycles}$$
 > GEMM0 是 shared-shared（SS）模式，每条 MMA 会从 SMEM 读取 `128 × d` 的 Q tille 和 `d × 128` 的 K tile，计算 `M × N` 的输出总共需要 $\lceil M/128 \rceil \times \lceil N/128 \rceil$ 条 MMA 指令。所以 GEMM0 的 SMEM 读取量为：
-> $$
-> \lceil M/128 \rceil \times \lceil N/128 \rceil \times (128d + 128d) \times 2\text{ B}
-> $$
+> $$\lceil M/128 \rceil \times \lceil N/128 \rceil \times (128d + 128d) \times 2\text{ B}$$
 > GEMM1 是 tensor-shared（TS）模式，每条 MMA 都会从 SMEM 中读取 `N × 128` 的 V tile，计算 `M × d` 的输出需要 $\lceil M/128 \rceil \times \lceil d/128 \rceil$ 条 MMA 指令。所以 GEMM1 的 SMEM 读取量为：
-> $$
-> \lceil M/128 \rceil \times \lceil d/128 \rceil \times 128N \times 2 \text{ B}
-> $$
+> $$\lceil M/128 \rceil \times \lceil d/128 \rceil \times 128N \times 2 \text{ B}$$
 > SMEM 带宽为每周期 128 字节，则 SMEM 读取时间为：
-> $$
-> T_{\mathrm{smem}}
-> =
-> \frac{
-> 2\lceil M/128 \rceil \lceil N/128 \rceil 256d
-> +
-> 2\lceil M/128 \rceil \lceil d/128 \rceil 128N
-> }{128}
-> $$
+> $$T_{\mathrm{smem}} = \frac{ 2\lceil M/128 \rceil \lceil N/128 \rceil 256d + 2\lceil M/128 \rceil \lceil d/128 \rceil 128N }{128}$$
 > 假设 `M`、`N`、`d` 都是 128 的倍数，可化简为：
-> $$
-> T_{\mathrm{smem}}
-> =
-> \frac{3MNd}{8192}
-> \ \text{cycles}
-> $$
+> $$T_{\mathrm{smem}} = \frac{3MNd}{8192} \ \text{cycles}$$
 > 前向传播还需要对 `M × N` 个值执行指数运算，对应 attention 矩阵 `S`。Exp 单元吞吐量为每周期 16 次，其所需时间为：
-> $$
-> T_{\mathrm{exp}} = \frac{MN}{16}\ \text{cycles}
-> $$
+> $$T_{\mathrm{exp}} = \frac{MN}{16}\ \text{cycles}$$
 
 
 
@@ -1601,9 +1570,7 @@ NV GPU 上的指数运算在 MUFU pipe 中进行，通过`ex2.approx.f32`一条�
 > **核心思路：把 2^x 拆成两半**
 >
 > 要算 $2^x$，关键观察是 IEEE 754 单精度浮点数 (FP32) 的结构本身就是**以 2 为底的指数表示**：
-> $$
-> \text{FP32}: \text{value} = (-1)^s \cdot 2^{e-127} \cdot 1.m
-> $$
+> $$\text{FP32}: \text{value} = (-1)^s \cdot 2^{e-127} \cdot 1.m$$
 > 其中 $e$ 是 8-bit 指数字段，$m$ 是 23-bit 尾数。也就是说，**FP32 的二进制位本身就编码了一个 2 的整数次幂乘上一个 [1, 2) 区间的尾数**。
 >
 > 我们把 $x$ 拆成整数部分和小数部分：$x = \lfloor x \rfloor + x_{\text{frac}}, \quad x_{\text{frac}} \in [0, 1)$
@@ -1630,13 +1597,9 @@ NV GPU 上的指数运算在 MUFU pipe 中进行，通过`ex2.approx.f32`一条�
 > 4. 多项式进行求值计算 $2^{x_{\mathrm{frac}}}$
 >
 >    在 $[0, 1)$ 上用一个 4-5 次多项式逼近 $2^{x_{\text{frac}}}$：
->    $$
->    2^{x_{\text{frac}}} \approx p_0 + p_1 \cdot x_{\text{frac}} + p_2 \cdot x_{\text{frac}}^2 + \dots + p_n \cdot x_{\text{frac}}^n
->    $$
+>    $$2^{x_{\text{frac}}} \approx p_0 + p_1 \cdot x_{\text{frac}} + p_2 \cdot x_{\text{frac}}^2 + \dots + p_n \cdot x_{\text{frac}}^n$$
 >    多项式可以用 **Horner 形式**求值，让所有运算变成 FMA：
->    $$
->    p(x_{\text{frac}}) = ((((p_n \cdot x_{\text{frac}} + p_{n-1}) \cdot x_{\text{frac}} + p_{n-2}) \cdot x_{\text{frac}} + \dots) \cdot x_{\text{frac}} + p_0)
->    $$
+>    $$p(x_{\text{frac}}) = ((((p_n \cdot x_{\text{frac}} + p_{n-1}) \cdot x_{\text{frac}} + p_{n-2}) \cdot x_{\text{frac}} + \dots) \cdot x_{\text{frac}} + p_0)$$
 >    每一层都是一个 `fma.f32 r, x_frac, r, p_i`，**n 次多项式正好用 n 条 FMA**。
 >
 >    论文给出的精度数据：
