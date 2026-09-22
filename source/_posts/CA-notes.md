@@ -1,7 +1,7 @@
 ---
 title: CA-notes
 date: 2024-08-18 10:01:03
-tags: CS-notes
+tags: 课程笔记
 comments: false
 excerpt: 《计算机体系结构基础》复习笔记
 mathjax: true

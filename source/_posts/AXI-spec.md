@@ -1,7 +1,7 @@
 ---
 title: AXI-spec
 date: 2025-01-13 23:01:19
-tags: spec
+tags: 体系结构
 comments: false
 excerpt: AXI总线协议手册整理
 mathjax: true

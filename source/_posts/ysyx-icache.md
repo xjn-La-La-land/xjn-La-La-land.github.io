@@ -1,7 +1,7 @@
 ---
 title: 一生一芯双周分享汇报
 date: 2024-08-19 14:39:23
-tags: CS-notes
+tags: 体系结构
 comments: false
 excerpt: NPC中icache的参数配置与性能优化
 mathjax: true

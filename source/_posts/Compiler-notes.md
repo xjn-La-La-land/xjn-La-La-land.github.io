@@ -1,7 +1,7 @@
 ---
 title: Compiler-notes
 date: 2026-01-04 22:23:36
-tags: CS-notes
+tags: 课程笔记
 comments: false
 excerpt: 《编译程序高级教程》复习习题整理
 mathjax: true

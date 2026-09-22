@@ -2,10 +2,7 @@
 title: LLM Attention 架构近期演进
 date: 2026-09-16 14:52:01
 updated: 2026-09-22 00:20:03
-tags:
-  - CS-notes
-  - LLM inference
-  - Attention
+tags: LLM推理
 comments: false
 excerpt: 梳理 Full / Linear / Sparse / Compressed / SWA 五大类 Attention 的近期演进，配合 DeepSeek、Qwen、Kimi、MiniMax 四家技术报告的详细解读（内嵌 HTML 完整文档）。
 mathjax: true

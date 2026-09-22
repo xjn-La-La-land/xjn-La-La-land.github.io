@@ -1,7 +1,7 @@
 ---
 title: Intel AMX组会报告
 date: 2025-09-18 20:55:41
-tags: CS-notes
+tags: 体系结构
 comments: false
 excerpt: Intel AMX架构介绍、香山上AMX的移植、AMX GEMM算子的性能优化
 mathjax: true
