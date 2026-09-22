@@ -19,7 +19,7 @@ mathjax: true
 
 ### 1.1 从一次生成请求看进程分工
 
-用户发送一轮对话后，FreeToken 需要把消息转换成模型输入、组织计算，再把生成的 token 转回文本。**在线服务将这些工作分配给几类进程：**
+用户发送一轮对话后，FreeToken 需要把消息转换成模型输入、组织计算，再把生成的 token 转回文本。<strong>在线服务将这些工作分配给几类进程：</strong>
 
 | 组件 | 接收的内容 | 主要工作 |
 | --- | --- | --- |
@@ -101,7 +101,7 @@ Engine 接收已经准备好的 batch，提交模型前向和采样，返回 GPU
 
 ### 2.1 资源池与请求的关系
 
-**这里的“资源池”指的是 FreeToken 在 GPU 显存中维护的缓存资源，包含了多种运行时缓存数据。**
+<strong>这里的“资源池”指的是 FreeToken 在 GPU 显存中维护的缓存资源，包含了多种运行时缓存数据。</strong>
 
 Engine 在启动时为资源池分配 GPU 张量。
 
@@ -130,7 +130,7 @@ Engine 在启动时为资源池分配 GPU 张量。
 - 列号：表示 token 在该请求序列中的逻辑位置。总列数经过 page 和内存对齐处理，可能大于实际的 `max_seq_len`。
 - 额外的一行：供 dummy request 使用。
 
-**`token_pool` 保存 token ID**。例如：
+<strong>`token_pool` 保存 token ID</strong>。例如：
 
 ```python
 token_pool[3, 5] = 109266
@@ -138,7 +138,7 @@ token_pool[3, 5] = 109266
 
 这表示占用第 3 行的请求，在位置 5 上的 token ID 为 `109266`。prompt token 会被复制到这张表中，后续采样出的 GPU token 也会写回对应位置，作为下一次 decode 的输入。请求另有 CPU 上的 `input_ids`，供结果处理等逻辑使用。
 
-**`page_table` 保存同一位置的 KV 存储索引**：
+<strong>`page_table` 保存同一位置的 KV 存储索引</strong>：
 
 ```python
 page_table[3, 5] = 127
@@ -158,7 +158,7 @@ page_table[3, 5] = 127
 
 ### 2.3 KV pool：按页分配的历史 K/V
 
-**KV pool 保存实际的 K/V 数值。**FreeToken 按 page 管理分配，每页容纳 `page_size` 个 token，`num_pages` 表示可用页数。因此共享 KV 容量是：
+<strong>KV pool 保存实际的 K/V 数值。</strong>FreeToken 按 page 管理分配，每页容纳 `page_size` 个 token，`num_pages` 表示可用页数。因此共享 KV 容量是：
 
 ```Plain Text
 可用物理 token slots = num_pages × page_size
@@ -199,7 +199,7 @@ Qwen 的 Full Attention 使用 `MHAKVCache`。将层号重映射等细节省略�
 
 ### 2.4 `linear_state_pool`：实时 GDN 状态与 Snapshot 
 
-**一个 GDN state slot 保存某个序列位置上、当前 rank 所有 GDN 层的状态。**
+<strong>一个 GDN state slot 保存某个序列位置上、当前 rank 所有 GDN 层的状态。</strong>
 
 池中主要有两组 GPU 张量：
 
@@ -257,9 +257,9 @@ GDN 的实时状态大小不随上下文增长，但保存更多历史 Snapshot 
 
 ### 2.5 Prefix cache：记录哪些计算可以复用
 
-前面的 KV pool 和 GDN pool 解决状态存放问题，**Prefix cache 负责查找：新请求开头的一段 token 是否已经计算过，对应的数据还保存在哪里。**
+前面的 KV pool 和 GDN pool 解决状态存放问题，<strong>Prefix cache 负责查找：新请求开头的一段 token 是否已经计算过，对应的数据还保存在哪里。</strong>
 
-**本文使用的 `HybridRadixCache` 以 token ID 前缀组织 Radix Tree。**树的结构是 Python 对象，节点关联 token 序列和底层资源索引。每个节点中存储：
+<strong>本文使用的 `HybridRadixCache` 以 token ID 前缀组织 Radix Tree。</strong>树的结构是 Python 对象，节点关联 token 序列和底层资源索引。每个节点中存储：
 
 ```python
 node._key         # 该节点这一段 token IDs
@@ -279,10 +279,10 @@ node.mamba_value  # 可选：节点末尾对应的 GDN 状态 slot ID
 
 ### 2.6 MoE expert cache：模型权重的 GPU 驻留空间
 
-**专家权重属于模型本身。在 offload/hybrid 路径中：**
+<strong>专家权重属于模型本身。在 offload/hybrid 路径中：</strong>
 
-- **CPU host banks 按层保存完整的 routed-expert 权重。**
-- **GPU expert cache 保存其中一部分。一枚 expert slot 容纳某一层、某一个 routed expert 的权重，通常包括 gate、up、down 三个投影。**
+- <strong>CPU host banks 按层保存完整的 routed-expert 权重。</strong>
+- <strong>GPU expert cache 保存其中一部分。一枚 expert slot 容纳某一层、某一个 routed expert 的权重，通常包括 gate、up、down 三个投影。</strong>
 
 按本文 Qwen 示例，单个 BF16 expert 的原始投影尺寸为：
 
@@ -422,7 +422,7 @@ batch = (
 - 遇到无法接纳的请求时停止遍历；此前已选中的请求仍可组成 batch。
 - 只有没有组成 prefill batch 时，才尝试 decode。DecodeManager 将 `running_reqs` 按 `uid` 排序，组成 decode batch。
 
-**因此，prefill-first 会使已有 decode 请求等待新 prompt 的处理；当 prefill 因资源不足而无法组成 batch 时，已有 decode 仍有机会继续运行。**
+<strong>因此，prefill-first 会使已有 decode 请求等待新 prompt 的处理；当 prefill 因资源不足而无法组成 batch 时，已有 decode 仍有机会继续运行。</strong>
 
 
 对于尚未准入的新请求，`PrefillAdder` 依次处理：
@@ -529,7 +529,7 @@ def _forward(self, forward_input: ForwardInput) -> ForwardOutput:
 
 `Engine.forward_batch()` 随后按源码顺序完成以下工作：
 
-1. 在 Engine stream 上设置 Context 并提交模型计算：**prefill 走 eager `model.forward()`；decode 在捕获范围内可以 replay，否则走 eager。**若存在 CPU MoE executor，随后检查其错误标记，发现故障则抛出异常。
+1. 在 Engine stream 上设置 Context 并提交模型计算：<strong>prefill 走 eager `model.forward()`；decode 在捕获范围内可以 replay，否则走 eager。</strong>若存在 CPU MoE executor，随后检查其错误标记，发现故障则抛出异常。
 2. 对真实请求调用 `complete_one()`，推进 CPU 上的长度记账。
 3. 取出真实请求对应的 logits，按采样参数产生下一 token，转为 GPU `int32` 张量。
 4. 发起 token 的异步 GPU→CPU 拷贝，在同一 stream 上记录完成事件，返回 `ForwardOutput`。
@@ -591,7 +591,7 @@ batch, (_, next_tokens_cpu, copy_done) = last_data[0].batch, last_data[1]
 copy_done.synchronize()
 ```
 
-**`synchronize()` 在这里阻塞 CPU，直到事件之前的工作完成。**随后第 `i` 个 CPU token 对应 `batch.reqs[i]`，普通请求的处理顺序是：
+<strong>`synchronize()` 在这里阻塞 CPU，直到事件之前的工作完成。</strong>随后第 `i` 个 CPU token 对应 `batch.reqs[i]`，普通请求的处理顺序是：
 
 1. 从 `next_tokens_cpu[i]` 取出 token，通过 `append_host()` 追加到 CPU `input_ids`，检查停止条件，并在需要时记录 tool-call anchor。本例的 host 序列变为 `[10, 20, 30, 40, 50]`。
 2. 构造包含请求 ID、token ID、是否结束和结束原因的 `DetokenizeMsg`，再处理资源：结束请求退出 decode 集合；完成 prefill 但还要继续生成的请求调用 `cache_req(finished=False)`。
@@ -658,7 +658,7 @@ Detokenizer 收到 `DetokenizeMsg` 后，按请求维护解码状态，将 token
 - 长度 152 的 Snapshot 已经包含 B 不同的后续内容，不能使用。
 - 如果长度 128 的 Snapshot 仍在，就复用 `[0, 128)`，重新 prefill `[128, 160)`。其中 `[128, 150)` 虽然 token 相同，仍需重算，以推进 GDN 状态。
 
-**`HybridRadixCache.match_prefix()` 先沿树匹配 token，再沿父节点寻找最深的有效 Snapshot 。**整条已匹配路径都没有 Snapshot 时，返回命中长度 0。
+<strong>`HybridRadixCache.match_prefix()` 先沿树匹配 token，再沿父节点寻找最深的有效 Snapshot 。</strong>整条已匹配路径都没有 Snapshot 时，返回命中长度 0。
 
 ![图 8](figure-08.png)
 
@@ -855,7 +855,7 @@ y = attention(q, k, v)      |   FlashInfer Attention kernel
 
 一个 PyTorch 算子不一定只对应一个 kernel，也可能发射多个 kernel。
 
-**CUDA stream** 可以理解成 GPU 的命令队列。Python/CPU 负责发布命令，GPU 负责异步执行命令，CUDA stream 是这些命令的有序队列。同一个 stream 中的命令严格按顺序执行。
+<strong>CUDA stream</strong> 可以理解成 GPU 的命令队列。Python/CPU 负责发布命令，GPU 负责异步执行命令，CUDA stream 是这些命令的有序队列。同一个 stream 中的命令严格按顺序执行。
 
 通过这个命令队列，CPU 和 GPU 实现异步执行。
 
@@ -909,7 +909,7 @@ graph.replay()
 
 ![图 13](figure-13.png)
 
-CUDA Graph **不会把多个 kernel 融合成一个 kernel**。它只是把多个 launch 预先组织好，减少 CPU/driver 每轮重复提交的成本。
+CUDA Graph <strong>不会把多个 kernel 融合成一个 kernel</strong>。它只是把多个 launch 预先组织好，减少 CPU/driver 每轮重复提交的成本。
 
 Graph capture 通常要求：数据内容可以变化，但是 buffer 地址和形状不能随便变化。
 
@@ -926,7 +926,7 @@ tensor 内存地址固定
 
 ## 6. Overlap scheduling
 
-`normal_loop()` 在提交当前 batch 后立即处理当前结果；**`overlap_loop()` 把相邻两个 batch 错开：GPU 执行 batch N+1 时，CPU 处理 batch N 的结果。**
+`normal_loop()` 在提交当前 batch 后立即处理当前结果；<strong>`overlap_loop()` 把相邻两个 batch 错开：GPU 执行 batch N+1 时，CPU 处理 batch N 的结果。</strong>
 
 ![图 14](figure-14.png)
 
