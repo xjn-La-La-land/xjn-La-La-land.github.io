@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>冒泡排序</title>
+  <link rel="stylesheet" href="assets/monaco.css">
+  <link rel="stylesheet" href="styles/demo.css">
+  <link rel="stylesheet" href="styles/compiler-panel.css">
+</head>
+<body>
+  <div class="workspace">
+  <nav class="activity-bar" aria-label="活动栏">
+    <button class="activity-button" id="explorer-toggle" type="button" aria-label="隐藏资源管理器" title="隐藏资源管理器" aria-controls="explorer-sidebar" aria-expanded="true">
+      <!-- Microsoft VS Code Codicons: files. CC BY 4.0; see icons/ATTRIBUTION.md. -->
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 22.5H17.595C17.07 23.4 16.11 24 15 24H7.5C4.185 24 1.5 21.315 1.5 18V6C1.5 4.89 2.1 3.93 3 3.405V18C3 20.475 5.025 22.5 7.5 22.5ZM21 8.121V18C21 19.6545 19.6545 21 18 21H7.5C5.8455 21 4.5 19.6545 4.5 18V3C4.5 1.3455 5.8455 0 7.5 0H12.879C13.4715 0 14.0505 0.24 14.4705 0.6585L20.3415 6.5295C20.766 6.954 21 7.5195 21 8.121ZM13.5 6.75C13.5 7.164 13.8375 7.5 14.25 7.5H19.1895L13.5 1.8105V6.75ZM19.5 18V9H14.25C13.0095 9 12 7.9905 12 6.75V1.5H7.5C6.672 1.5 6 2.1735 6 3V18C6 18.8265 6.672 19.5 7.5 19.5H18C18.828 19.5 19.5 18.8265 19.5 18Z"/></svg>
+    </button>
+  </nav>
+  <aside class="explorer" id="explorer-sidebar" aria-label="算法文件资源管理器">
+    <svg class="explorer-symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="cpp-file-icon" viewBox="0 0 24 24">
+        <path d="M5 2h9l5 5v15H5z M14 2v6h5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        <text x="12" y="17" fill="currentColor" text-anchor="middle" font-family="Menlo,monospace" font-size="7" font-weight="bold">C++</text>
+      </symbol>
+      <symbol id="folder-icon" viewBox="0 0 24 24">
+        <path d="M3 5h7l2 3h9v12H3z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </symbol>
+    </svg>
+    <div class="file-explorer" id="file-explorer">
+      <div class="explorer-heading"><span>资源管理器</span><span class="explorer-current" id="explorer-current">冒泡排序</span></div>
+      <p class="explorer-hint">选择文件，查看算法运行过程</p>
+      <details class="project-tree" open>
+        <summary class="project-heading"><span class="explorer-chevron" aria-hidden="true"></span><svg class="folder-icon" aria-hidden="true"><use href="#folder-icon"/></svg><span>sort-algo-demo</span></summary>
+        <nav class="file-list" aria-label="排序算法文件">
+          <button class="explorer-file" type="button" data-algorithm="bubble" aria-current="true"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">bubble_sort.cpp</span><span class="file-algorithm">冒泡排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="selection" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">selection_sort.cpp</span><span class="file-algorithm">选择排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="insertion" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">insertion_sort.cpp</span><span class="file-algorithm">插入排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="merge" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">merge_sort.cpp</span><span class="file-algorithm">归并排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="quick" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">quick_sort.cpp</span><span class="file-algorithm">快速排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="heap" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">heap_sort.cpp</span><span class="file-algorithm">堆排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="shell" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">shell_sort.cpp</span><span class="file-algorithm">希尔排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="comb" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">comb_sort.cpp</span><span class="file-algorithm">梳排序</span></span></button>
+          <button class="explorer-file" type="button" data-algorithm="counting" aria-current="false"><svg class="file-icon" aria-hidden="true"><use href="#cpp-file-icon"/></svg><span class="file-label"><span class="file-name">counting_sort.cpp</span><span class="file-algorithm">计数排序</span></span></button>
+        </nav>
+      </details>
+    </div>
+  </aside>
+  <main aria-label="冒泡排序动画">
+    <header>
+      <h1>冒泡排序</h1>
+      <p class="subtitle">bubble sort</p>
+      <div class="counters">
+        <div class="counter"><span id="primary-count-label">比较次数</span><strong id="comparisons">0</strong></div>
+        <div class="counter"><span id="secondary-count-label">交换次数</span><strong id="swaps">0</strong></div>
+      </div>
+    </header>
+    <svg class="chart" viewBox="0 0 484 320" role="img" aria-label="机械夹爪夹取相邻柱子，抬升并交换位置">
+      <line id="machine-rail" x1="20" y1="30" x2="464" y2="30" stroke="#abcde04d"/>
+      <line id="array-baseline" x1="20" y1="290" x2="464" y2="290" stroke="#abcde04d"/>
+      <g id="bars"></g>
+      <g class="indices" id="indices"></g>
+      <g id="comparator">
+        <path id="arm-0"/>
+        <path id="arm-1"/>
+        <g id="claw-0">
+          <path class="jaw-left"/><path class="jaw-right"/>
+          <rect class="housing" x="-12" y="-5" width="24" height="10" rx="2"/>
+        </g>
+        <g id="claw-1">
+          <path class="jaw-left"/><path class="jaw-right"/>
+          <rect class="housing" x="-12" y="-5" width="24" height="10" rx="2"/>
+        </g>
+        <g id="slider">
+          <rect class="housing" x="-20" y="24" width="40" height="13" rx="3"/>
+          <circle class="joint" cx="0" cy="30.5" r="2.5"/>
+          <text id="comparison" x="0" y="13"></text>
+        </g>
+      </g>
+    </svg>
+    <div class="debug-controls">
+      <p class="algorithm-note" id="algorithm-note" aria-live="polite" hidden></p>
+      <div class="debug-toolbar" role="toolbar" aria-label="排序调试">
+        <button class="tool" id="play-toggle" type="button" aria-label="暂停"><img id="play-icon" src="icons/pause.svg" alt=""></button>
+        <button class="tool" id="step" type="button" aria-label="单步执行一个真实动作" title="动作单步：比较、交换阶段、写入"><img src="icons/step-forward.svg" alt=""></button>
+        <button class="tool" id="restart" type="button" aria-label="重新开始"><img src="icons/rotate-ccw.svg" alt=""></button>
+        <span class="execution-state" id="execution-state" aria-live="polite">运行中</span>
+      </div>
+      <form class="array-form" id="array-form" novalidate>
+        <label for="array-input">数组</label>
+        <input id="array-input" value="5, 2, 8, 1, 7, 3, 6, 4" maxlength="80" autocomplete="off" spellcheck="false" aria-describedby="array-error" aria-label="数组，2 至 12 个 1 至 99 的整数，以逗号或空格分隔">
+        <button class="tool" id="randomize" type="button" aria-label="随机初始化"><img src="icons/shuffle.svg" alt=""></button>
+        <button class="apply" type="submit">应用</button>
+      </form>
+      <p class="array-error" id="array-error" role="alert"></p>
+    </div>
+    <section class="code-window" aria-label="C++ 代码编辑器">
+      <div class="window-title">
+        <div class="code-tabs" role="tablist" aria-label="排序算法源文件">
+          <button class="code-tab" id="tab-bubble" type="button" role="tab" aria-selected="true" data-algorithm="bubble">bubble_sort.cpp</button>
+          <button class="code-tab" id="tab-selection" type="button" role="tab" aria-selected="false" data-algorithm="selection">selection_sort.cpp</button>
+          <button class="code-tab" id="tab-insertion" type="button" role="tab" aria-selected="false" data-algorithm="insertion">insertion_sort.cpp</button>
+          <button class="code-tab" id="tab-merge" type="button" role="tab" aria-selected="false" data-algorithm="merge">merge_sort.cpp</button>
+          <button class="code-tab" id="tab-quick" type="button" role="tab" aria-selected="false" data-algorithm="quick">quick_sort.cpp</button>
+          <button class="code-tab" id="tab-heap" type="button" role="tab" aria-selected="false" data-algorithm="heap">heap_sort.cpp</button>
+          <button class="code-tab" id="tab-shell" type="button" role="tab" aria-selected="false" data-algorithm="shell">shell_sort.cpp</button>
+          <button class="code-tab" id="tab-comb" type="button" role="tab" aria-selected="false" data-algorithm="comb">comb_sort.cpp</button>
+          <button class="code-tab" id="tab-counting" type="button" role="tab" aria-selected="false" data-algorithm="counting">counting_sort.cpp</button>
+        </div>
+        <div class="editor-actions" role="toolbar" aria-label="C++ 编译运行">
+          <button class="ide-action run-code" id="compile-run" type="button" aria-label="编译运行当前文件" title="编译运行当前文件（Ctrl/⌘+Enter）"><span class="codicon codicon-play" aria-hidden="true"></span><span class="run-label">运行</span></button>
+          <button class="ide-action run-code" id="compile-animate" type="button" aria-label="编译当前代码并演示" title="自动记录当前 C++ 的执行轨迹并播放动画"><span class="codicon codicon-debug-start" aria-hidden="true"></span><span class="run-label">编译并演示</span></button>
+          <button class="ide-action" id="compile-stop" type="button" aria-label="停止编译或程序" title="停止编译或程序" disabled><span class="codicon codicon-debug-stop" aria-hidden="true"></span></button>
+        </div>
+      </div>
+      <div class="code" id="code" role="tabpanel" aria-labelledby="tab-bubble"></div>
+      <p class="editor-note" id="editor-notice" role="status">正在加载 Monaco 编辑器…</p>
+      <div class="source-save-bar">
+        <span id="source-save-status" role="status">正在加载算法源码…</span>
+        <button id="source-save-retry" hidden>重试保存</button>
+        <button id="source-export" hidden>导出草稿</button>
+        <button id="source-reload" hidden>重新载入磁盘文件</button>
+      </div>
+      <div class="variables"><span>n = <b id="var-n">8</b></span><span>i = <b id="var-i">0</b></span><span>j = <b id="var-j">-</b></span><span id="swapped-variable">swapped = <b id="var-swapped">-</b></span><span id="min-variable">minIndex = <b id="var-min">-</b></span><span id="gap-variable" style="display:none">gap = <b id="var-gap">-</b></span><span id="heap-variable" style="display:none">heapSize = <b id="var-heap-size">-</b></span><span id="tmp-variable">tmp = <b id="var-tmp">-</b></span></div>
+      <div class="panel-resize" id="output-resize" role="separator" tabindex="0" aria-label="调整输出面板高度" aria-orientation="horizontal" aria-valuemin="80" aria-valuemax="320" aria-valuenow="180" aria-controls="output-body"></div>
+      <section class="output-panel" aria-label="C++ 运行输出面板">
+        <div class="output-toolbar">
+          <button class="output-tab" id="output-toggle" type="button" aria-expanded="true" aria-controls="output-body"><span class="codicon codicon-output" aria-hidden="true"></span>输出</button>
+          <span class="output-channel">C++ / WASM</span>
+          <span class="output-state" id="compile-state" role="status" aria-live="polite">就绪</span>
+          <button class="ide-action" id="output-clear" type="button" aria-label="清空输出" title="清空输出"><span class="codicon codicon-clear-all" aria-hidden="true"></span></button>
+          <button class="ide-action" id="output-collapse" type="button" aria-label="隐藏输出面板" title="隐藏输出面板" aria-expanded="true" aria-controls="output-body"><span class="codicon codicon-chevron-down" aria-hidden="true"></span></button>
+        </div>
+        <div class="output-body" id="output-body">
+          <pre class="output-text" id="compiler-output" tabindex="0" aria-label="编译日志与程序输出">点击右上角“运行”，编译当前文件。
+函数片段将使用输入数组自动生成 main。
+首次运行加载约 57.6 MiB 工具链；“编译并演示”使用当前 C++ 的执行轨迹。</pre>
+        </div>
+      </section>
+      <div class="ide-statusbar"><span id="compile-file">bubble_sort.cpp</span><span>浏览器内执行</span><span class="statusbar-right">UTF-8<span>C++17</span></span></div>
+    </section>
+    <p class="status" id="status">a = [5, 2, 8, 1, 7, 3, 6, 4]</p>
+    <noscript>请启用 JavaScript 以播放动画。</noscript>
+  </main>
+  </div>
+  <script src="assets/gsap.min.js"></script>
+  <script src="assets/monaco.js"></script>
+  <script src="js/source-store.js"></script>
+  <script src="js/code-editor.js"></script>
+  <script src="js/compiler.js"></script>
+  <script src="js/trace-events.js?v=20261001-source-save-1"></script>
+  <script src="js/compiler-panel.js"></script>
+  <script src="js/demo.js?v=20261001-source-save-1"></script>
+</body>
+</html>

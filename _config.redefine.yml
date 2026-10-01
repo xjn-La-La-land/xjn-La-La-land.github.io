@@ -193,6 +193,9 @@ navbar:
     Archives: 
       path: /archives 
       icon: fa-regular fa-box-archive # can be empty
+    排序动画:
+      path: /html/sort-algo-demo/
+      icon: fa-solid fa-arrow-down-wide-short
     # Status: 
     #   path: https://status.ohevan.com/
     #   icon: fa-regular fa-chart-bar
