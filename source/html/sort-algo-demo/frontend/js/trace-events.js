@@ -1,4 +1,5 @@
 (function (exports) {
+  const stateAPI = typeof SortTraceStates !== 'undefined' ? SortTraceStates : typeof require === 'function' ? require('./trace-states.js') : null;
   const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   function parseTrace(text, initial, sourceLines) {
     const records = text.trim().split('\n').map(line => JSON.parse(line));
@@ -37,6 +38,8 @@
       } else if (e.kind === 'rotate') {
         check([e.left,e.middle,e.right].every(Number.isInteger) && e.left>=0 && e.left<=e.middle && e.middle<=e.right && e.right<=n,'rotate 边界');
         const rotate = a => [...a.slice(0,e.left),...a.slice(e.middle,e.right),...a.slice(e.left,e.middle),...a.slice(e.right)];expected=rotate(values);nextIds=rotate(ids);
+      } else if (e.kind === 'phase') {
+        check(!saved && stateAPI?.validatePhase(e,n), '阶段标记');
       } else if (e.kind === 'finish') check(i===records.length-1 && !saved,'未完成交换');
       else check(e.kind==='bucket' && Number.isInteger(e.bucket) && e.bucket>=0 && Number.isInteger(e.count) && [1,-1].includes(e.x) && e.count===e.y+e.x,'未知动作/计数桶');
       check(equal(e.values,expected) && equal(e.ids,nextIds),'操作后态');
@@ -48,15 +51,16 @@
 
   function toAnimationTrace(records, initial, sourceLines) {
     let comparisons=0, swaps=0, scans=0, writes=0, manual=null, lastScan=null;
+    const tracker=stateAPI?.createTracker(initial);let state=null;
     const output=[];
     function base(e, before=false) {
       const v=e.variables||{};
       return {line:e.kind==='finish'?sourceLines:e.line,column:e.column,action:'none',pair:[],result:null,
         order:(before?e.beforeIds:e.ids).slice(),values:(before?e.before:e.values).slice(),variables:v,
         i:v.i??null,j:v.j??null,minIndex:v.minIndex??null,tmp:v.tmp??null,swapped:v.swapped==null?null:!!v.swapped,
-        gap:v.gap??null,heapSize:v.heapSize??null,comparisons,swaps,scans,writes,sortedFrom:null,note:''};
+        gap:v.gap??null,heapSize:v.heapSize??null,comparisons,swaps,scans,writes,sortedFrom:null,state,note:''};
     }
-    function push(e,action,pair=[],before=false,extra={}){const event={...base(e,before),action,pair:pair.slice(),...extra};output.push(event);return event;}
+    function push(e,action,pair=[],before=false,extra={}){const event={...base(e,before),action,pair:pair.slice(),...extra};event.state=stateAPI?.projectState(state,event.order)||null;output.push(event);return event;}
     function exchange(e,left,right,previousValues=e.before,previousIds=e.beforeIds,nextValues=e.values,nextIds=e.ids,logicalSwap=false) {
       const pair=[Math.min(left,right),Math.max(left,right)].map(p=>previousIds[p]);
       if(left===right){push(e,'none');return;}
@@ -68,6 +72,8 @@
     push({kind:'entry',line:1,column:1,ids:initial.map((_,id)=>id),values:initial,variables:{}},'none');
     for(let index=0;index<records.length;index++) {
       const e=records[index];
+      state=tracker?.update(e)||null;
+      if(e.kind==='phase'){push(e,'state');continue;}
       if(e.kind==='compare') {
         const pair=[e.left,e.right].filter(p=>p>=0).map(p=>e.ids[p]).filter((id,i,a)=>a.indexOf(id)===i);
         if(pair.length===2)push(e,'grip',pair,true);
@@ -105,9 +111,10 @@
       if(e.kind==='write'){writes++;push(e,'write',[],false,{target:e.left,result:e.x});continue;}
       if(e.kind==='scan'){scans++;lastScan=e.left;push(e,'none',[e.ids[e.left]],false,{note:`读取 a[${e.left}] = ${e.x}`});continue;}
       if(e.kind==='bucket') {
-        push(e,e.x>0?'count':'none',lastScan===null?[]:[e.ids[lastScan]],false,{result:e.bucket,bucketCount:e.count,note:`count[${e.bucket}] = ${e.count}`});continue;
+        push(e,e.x>0?'count':'none',lastScan===null?[]:[e.ids[lastScan]],false,{result:e.bucket,bucketCount:e.count,compact:e.x===-1 && e.y===0,note:`count[${e.bucket}] = ${e.count}`});continue;
       }
-      push(e,e.kind==='finish'?'finish':'none',[],false,{note:e.kind==='read'?`读取 a[${e.left}] = ${e.x}`:''});
+      const verifiedSorted=e.kind==='finish' && e.values.every((v,i)=>i===0||e.values[i-1]<=v) && equal(e.values.slice().sort((a,b)=>a-b),initial.slice().sort((a,b)=>a-b));
+      push(e,e.kind==='finish'?'finish':'none',[],false,{verifiedSorted,note:e.kind==='read'?`读取 a[${e.left}] = ${e.x}`:''});
     }
     if(!output.length)throw new Error('没有可播放事件。');
     // Keep the existing grip only when the actual next operation lifts the
@@ -129,7 +136,7 @@
       if(release.action!=='release')continue;
       release.retain=[];
       let j=i+1;
-      while(continuous[j]?.action==='none' && equal(release.order,continuous[j].order) && equal(release.values,continuous[j].values))j++;
+      while(['none','state'].includes(continuous[j]?.action) && equal(release.order,continuous[j].order) && equal(release.values,continuous[j].values))j++;
       const grip=continuous[j];
       if(grip?.action!=='grip' || !equal(release.order,grip.order) || !equal(release.values,grip.values))continue;
       release.retain=release.pair.filter(id=>grip.pair.includes(id));

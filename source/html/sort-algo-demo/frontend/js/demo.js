@@ -185,6 +185,9 @@ function startSortDemo() {
     pendingTrace = null; cachedTrace = null; cachedKey = null;
     compilerPanel?.runner.stop(); timeline?.kill(); timeline = null; resetGrippers(); stepTarget = null; stepEnds = [];
     mode = 'stale'; codeEditor?.setExecutionSource(null);
+    document.querySelector('#algorithm-state').hidden = true;
+    document.querySelector('#state-markers').replaceChildren();
+    [...document.querySelector('#bars').children].forEach(bar => bar.classList.remove('finished','candidate','range-active','range-ordered','range-left','range-right','gap-group'));
     document.querySelector('#status').textContent = message; document.querySelector('#status').classList.remove('done'); updateControls();
   }
 
@@ -197,16 +200,20 @@ function startSortDemo() {
   mode = execution ? autoplay ? "running" : "paused" : "preparing";
   document.querySelector("#bars").replaceChildren();
   document.querySelector("#indices").replaceChildren();
+  const stateMarkers = document.querySelector('#state-markers');
+  stateMarkers.replaceChildren();
+  document.querySelector('#algorithm-state').hidden = true;
   document.querySelector("#var-n").textContent = values.length;
   renderCode();
   const trace = execution || [{ line:1, action:'none', pair:[], order:values.map((_,id)=>id), values:values.slice(), i:null, j:null, minIndex:null, tmp:null, swapped:null, comparisons:0, swaps:0, scans:0, writes:0, sortedFrom:null }];
+  const hasStates = trace.some(event => event.state);
   const svgNS = "http://www.w3.org/2000/svg";
-  // Two carried bars need separate lanes above the untouched bars when a swap
-  // spans several slots. Keep the bubble/counting stage at its original size.
+  // Larger bars still need room for the rail, grippers and carrying lanes.
+  // Long swaps reserve three bar heights; adjacent swaps reserve two.
   const usesExchange = ["selection", "insertion", "merge", "quick", "heap", "shell", "comb"].includes(algorithm)
     || trace.some(event => event.action === 'lift' && Math.abs(event.order.indexOf(event.pair[0]) - event.order.indexOf(event.pair[1])) > 1);
-  const baseline = usesExchange ? 380 : 290;
-  const idleY = baseline - 130;
+  const baseline = usesExchange ? 460 : 330;
+  const idleY = baseline - 156;
   const chart = document.querySelector(".chart");
   chart.setAttribute("viewBox", `0 0 484 ${baseline + 30}`);
   chart.style.aspectRatio = `484 / ${baseline + 30}`;
@@ -220,7 +227,7 @@ function startSortDemo() {
   const origin = (484 - (values.length - 1) * pitch - width) / 2;
   const center = position => origin + position * pitch + width / 2;
   const max = trace.reduce((largest, event) => event.values.reduce((n, value) => Math.max(n, value), largest), Math.max(1, ...values));
-  const heightFor = value => 22 + Math.max(0, value - 1) * 70 / Math.max(1, max - 1);
+  const heightFor = value => 28 + Math.max(0, value - 1) * 90 / Math.max(1, max - 1);
   const poses = values.map((value, id) => ({ x: origin + id * pitch, y: 0, height: heightFor(value) }));
   const bars = values.map((value, id) => {
     const group = document.createElementNS(svgNS, "g");
@@ -259,6 +266,53 @@ function startSortDemo() {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let selectedPair = [];
   let pairMode = "";
+  let currentState = null;
+  let stateLabel = null;
+
+  function renderState(event) {
+    currentState = event.state || null;
+    const panel = document.querySelector('#algorithm-state');
+    panel.hidden = !execution;
+    document.querySelector('.legend-ordered').textContent = currentState?.algorithm === 'quick' ? '分区：蓝 < pivot / 紫 ≥ pivot' : '局部有序';
+    document.querySelector('#state-description').textContent = currentState?.label || (event.action === 'finish' ? event.verifiedSorted ? '排序完成 · 结果已验证' : '回放完成 · 结果未通过升序排序检查' : hasStates ? '准备算法阶段标记' : '当前源码结构未匹配已验证规则 · 暂不推断算法阶段');
+    stateMarkers.replaceChildren(); stateLabel = null;
+    if (currentState) {
+      for (const range of currentState.ranges) {
+        if (range.end <= range.start) continue;
+        const path = document.createElementNS(svgNS, 'path');
+        const left = center(range.start) - width / 2, right = center(range.end - 1) + width / 2;
+        path.setAttribute('d', `M ${left} ${baseline + 2} v 5 H ${right} v -5`);
+        path.setAttribute('class', `state-range state-${range.kind}`);
+        stateMarkers.append(path);
+      }
+      if (currentState.gap && event.pair.length === 2) {
+        const slots = event.pair.map(id => event.order.indexOf(id)).sort((a,b)=>a-b);
+        const path = document.createElementNS(svgNS, 'path');
+        path.setAttribute('d', `M ${center(slots[0])} ${baseline+23} v 4 H ${center(slots[1])} v -4`);
+        path.setAttribute('class', 'state-range state-gap'); stateMarkers.append(path);
+      }
+      const id = currentState.pivot ?? currentState.candidate;
+      if (id != null && poses[id]) {
+        stateLabel = document.createElementNS(svgNS, 'text');
+        stateLabel.textContent = currentState.pivot != null ? 'pivot' : algorithm === 'heap' ? 'root' : algorithm === 'insertion' ? 'key' : algorithm === 'counting' ? 'out' : 'min';
+        stateMarkers.append(stateLabel); stateLabel.dataset.id = id;
+      }
+    }
+    const buckets = document.querySelector('#state-buckets');
+    buckets.hidden = currentState?.algorithm !== 'counting';
+    buckets.replaceChildren();
+    if (!buckets.hidden) {
+      const caption = document.createElement('span');
+      caption.textContent = '桶剩余数量'; caption.classList.add('bucket-caption'); buckets.append(caption);
+      Object.entries(currentState.buckets).filter(([value,count]) => count >= 0 || values.includes(Number(value))).sort((a,b) => Number(a[0])-Number(b[0])).forEach(([value,count]) => {
+        const chip = document.createElement('span');
+        chip.textContent = `${value} : ${Math.max(0,count)}`;
+        chip.setAttribute('title', `实际 C++ 变量 count[${value}] = ${count}${count < 0 ? '（后缀自减的失败判断，桶已耗尽）' : ''}`);
+        chip.classList.toggle('current', Number(value) === currentState.bucket);
+        buckets.append(chip);
+      });
+    }
+  }
 
   function drawMachine() {
     poses.forEach((pose, id) => {
@@ -267,6 +321,11 @@ function startSortDemo() {
       bars[id].children[0].setAttribute("height", pose.height);
       bars[id].children[1].setAttribute("y", baseline - pose.height + Math.min(23, pose.height - 4));
     });
+    if (stateLabel) {
+      const pose = poses[Number(stateLabel.dataset.id)];
+      stateLabel.setAttribute('x', pose.x + width / 2);
+      stateLabel.setAttribute('y', Math.max(48, baseline - pose.height + pose.y - 34));
+    }
     slider.setAttribute("transform", `translate(${machine.x} 0)`);
     claws.forEach(claw => {
       // A closed gripper follows the same pose as its bar, including lift and crossing.
@@ -319,6 +378,7 @@ function startSortDemo() {
   }
 
   function render(event) {
+    renderState(event);
     if (["lift", "exchange"].includes(event.action)) {
       selectedPair = event.pair;
       pairMode = "exchanging";
@@ -338,15 +398,18 @@ function startSortDemo() {
       const selected = selectedPair.includes(id);
       bar.classList.toggle("comparing", selected && pairMode === "comparing");
       bar.classList.toggle("exchanging", selected && pairMode === "exchanging");
-      bar.classList.toggle("candidate", algorithm === "selection" && event.order?.[event.minIndex] === id);
-      const position = Math.round((poses[id].x - origin) / pitch);
+      bar.classList.toggle("candidate", currentState ? currentState.candidate === id || currentState.pivot === id : event.sortedFrom != null && algorithm === "selection" && event.order?.[event.minIndex] === id);
+      const position = event.order.indexOf(id);
+      for (const kind of ['active', 'ordered', 'left', 'right']) bar.classList.toggle(`range-${kind}`, !!currentState?.ranges.some(range => range.kind === kind && position >= range.start && position < range.end));
+      bar.classList.toggle('gap-group', currentState?.gap > 0 && currentState.group != null && position % currentState.gap === currentState.group);
       const prefixSorted = ["selection", "insertion", "counting"].includes(algorithm);
-      bar.classList.toggle("finished", event.action === "finish" || event.sortedFrom != null && (prefixSorted ? position < event.sortedFrom : ["bubble", "heap"].includes(algorithm) && position >= event.sortedFrom));
+      bar.classList.toggle("finished", currentState ? currentState.fixed.includes(position) : (event.action === "finish" && event.verifiedSorted !== false) || event.sortedFrom != null && (prefixSorted ? position < event.sortedFrom : ["bubble", "heap"].includes(algorithm) && position >= event.sortedFrom));
     });
     if (algorithm === "counting" && event.action === "count") relation.textContent = `count[${event.result}] = ${event.bucketCount}`;
     status.textContent = `a = [${event.values.join(", ")}]`;
     status.classList.toggle("done", event.action === "finish");
     highlight(event.line);
+    drawMachine();
   }
 
   if (!execution) {
@@ -406,8 +469,11 @@ function startSortDemo() {
 
       trace.forEach((event, index) => {
         const next = trace[index + 1];
+        const changesArray = ['exchange', 'write', 'shift', 'drop'].includes(event.action);
+        let commitAt = null;
         timeline.addLabel(`action-${index}`, time);
-        timeline.call(() => render(event), [], time);
+        // Source focus may advance before the operation. Its post-state may not.
+        timeline.call(() => changesArray ? highlight(event.line) : render(event), [], time);
         if (event.action === "grip") {
           timeline.call(clearPair, [], time);
           const pair = [...event.pair].sort((a, b) => event.order.indexOf(a) - event.order.indexOf(b));
@@ -466,10 +532,10 @@ function startSortDemo() {
             const tallest = Math.max(...poses.map(pose => pose.height));
             // The lower lane clears every stationary bar; the upper lane also
             // clears the other carried bar and its gripper during crossing.
-            timeline.to(right, { y: -(tallest + 24), duration: .28, ease: "power2.inOut" }, time);
-            timeline.to(left, { y: -(tallest + right.height + 48), duration: .28, ease: "power2.inOut" }, time);
+            timeline.to(right, { y: -(tallest + 24), duration: .36, ease: "power2.inOut" }, time);
+            timeline.to(left, { y: -(tallest + right.height + 48), duration: .36, ease: "power2.inOut" }, time);
           }
-          time += .36;
+          time += slots === 1 ? .36 : .44;
         } else if (event.action === "exchange") {
           const [left, right] = event.pair.map(id => poses[id]);
           const leftTarget = origin + event.order.indexOf(event.pair[0]) * pitch;
@@ -483,13 +549,15 @@ function startSortDemo() {
             timeline.to(right, { x: rightTarget, duration: .32, ease: "power2.inOut" }, time);
             timeline.to(left, { x: leftTarget, duration: .32, ease: "power2.inOut" }, time + .40);
             timeline.to(left, { y: 0, duration: .26, ease: "power2.inOut" }, time + .72);
+            commitAt = time + .98;
             time += 1.06;
           } else {
             const travel = .32 + .08 * slots;
             timeline.to(left, { x: leftTarget, duration: travel, ease: "power2.inOut" }, time);
             timeline.to(right, { x: rightTarget, duration: travel, ease: "power2.inOut" }, time);
-            timeline.to([left, right], { y: 0, duration: .26, ease: "power2.inOut" }, time + travel);
-            time += travel + .34;
+            timeline.to([left, right], { y: 0, duration: .34, ease: "power2.inOut" }, time + travel);
+            commitAt = time + travel + .34;
+            time += travel + .42;
           }
         } else if (event.action === "count") {
           timeline.call(() => {
@@ -515,30 +583,37 @@ function startSortDemo() {
             relation.textContent = `a[${event.target ?? event.i}] = ${value}`;
             drawMachine();
           }, [], time + .24);
+          commitAt = time + .24;
           time += .30;
         } else if (event.action === "shift") {
           timeline.to(poses[event.movingId ?? event.pair[1]], { x: origin + (event.target ?? event.j) * pitch, duration: .32, ease: "power2.inOut" }, time);
+          commitAt = time + .32;
           time += .40;
         } else if (event.action === "drop") {
           const left = poses[event.movingId ?? event.pair[0]];
           timeline.to(left, { x: origin + (event.target ?? event.j + 1) * pitch, duration: .32, ease: "power2.inOut" }, time);
           timeline.to(left, { y: 0, duration: .26, ease: "power2.inOut" }, time + .32);
           timeline.to(event.pair.map(id => poses[id]), { y: 0, duration: .26, ease: "power2.inOut" }, time + .32);
+          commitAt = time + .58;
           time += .66;
         } else if (event.action === "release") {
           claws.forEach(claw => { const id = clawHolds.get(claw); if (id !== null) clawSlots.set(claw, event.order.indexOf(id)); });
           release(time + .10, event.retain || []);
           time += event.retain?.length === 2 ? .28 : .52;
+        } else if (event.action === "state") {
+          time += .18;
         } else if (event.action === "finish") {
           timeline.to(pointer, { opacity: 0, duration: .30 }, time);
           time += .30;
-        } else time += .28;
+        } else time += event.compact ? .01 : .28;
 
-        // Each boundary commits one statement and highlights the next executable line.
+        if (commitAt !== null) timeline.call(() => render(event), [], commitAt);
+
+        // Each boundary advances one presentation event and reveals its source site.
         if (next) {
           const boundary = time - .001;
           stepEnds.push(boundary);
-          timeline.call(() => render(next), [], boundary);
+          timeline.call(() => highlight(next.line), [], boundary);
         }
       });
       stepEnds.push(timeline.duration());

@@ -76,9 +76,11 @@
         const previous = visible.get(d.name);
         if (!previous || scope.begin.offset > previous.scope.begin.offset || d.begin.offset > previous.d.begin.offset) visible.set(d.name, { d, scope });
       }
-      return '{' + [...visible].slice(0, 32).map(([key]) => `{"${key}", static_cast<long long>(${key})}`).join(',') + '}';
+      return '{' + [...visible].slice(0, 32).map(([key]) => `{"${statePlan?.aliases?.[key] || key}", static_cast<long long>(${key})}`).join(',') + '}';
     }
-    const edits = [], sites = [], handled = new Set();
+    const stateAPI = typeof SortTraceStates !== 'undefined' ? SortTraceStates : typeof require === 'function' ? require('./trace-states.js') : null;
+    const statePlan = stateAPI?.plan(ast, source, name);
+    const edits = statePlan?.edits.slice() || [], sites = [], handled = new Set();
     function mark(n) { handled.add(n.id); for (const c of n.children) mark(c); }
     function add(n, expression, kind) {
       // Snapshot caller locals before evaluating side-effecting operands.
@@ -165,7 +167,7 @@
     edits.sort((a, b) => b.start - a.start || b.end - a.end);
     let result = source, boundary = source.length;
     for (const e of edits) { if (e.end > boundary) throw new Error('源码记录点重叠，拒绝生成不完整 trace。'); result = result.slice(0, e.start) + e.replacement + result.slice(e.end); boundary = e.start; }
-    return { source: result, sites: sites.sort((a, b) => a.line - b.line || a.column - b.column) };
+    return { source: result, sites: sites.sort((a, b) => a.line - b.line || a.column - b.column), statesRecognized: !!statePlan?.recognized };
   }
   Object.assign(exports, { parseTraceAst, instrumentTraceSource });
   if (typeof window !== 'undefined') window.SortTraceSource = exports;

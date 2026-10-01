@@ -1,6 +1,6 @@
 // The upstream WASI shim is kept unmodified; all product policy lives here.
 importScripts('../assets/wasm-clang/shared.js');
-importScripts('compiler.js', 'trace-source.js', 'trace-events.js');
+importScripts('compiler.js', 'trace-states.js', 'trace-source.js', 'trace-events.js');
 const TOOLCHAIN_REVISION = '648c4a89997a351eef75cdaec3ef5b89d4937dec';
 const moduleCache = new Map();
 let sysroot = null, active = false;

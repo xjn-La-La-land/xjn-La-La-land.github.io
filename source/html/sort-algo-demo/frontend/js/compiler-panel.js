@@ -46,6 +46,9 @@ function createCompilerPanel({ getFile, getValues, onTraceStart = () => {}, onTr
       if (result.status === 'error' && /__lttf2/.test(text)) append('提示：当前旧版 sysroot 存在 std::sort 链接缺陷；不是排序动画的问题。\n');
       const finished = request; request = null;
       if (finished?.trace) onTraceFinish(result, finished);
+      // Keep the status strip and retained log, giving the editor its height
+      // back only after a successful run. Failures must remain visible.
+      setExpanded(result.status !== 'done' || (result.exitCode ?? 0) !== 0);
     }
   });
   function start(trace = false, autoplay = true) {
