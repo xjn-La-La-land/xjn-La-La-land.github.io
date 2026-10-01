@@ -54,10 +54,11 @@
         <div class="counter"><span id="secondary-count-label">交换次数</span><strong id="swaps">0</strong></div>
       </div>
     </header>
-    <svg class="chart" viewBox="0 0 484 320" role="img" aria-label="机械夹爪夹取相邻柱子，抬升并交换位置">
+    <svg class="chart" viewBox="0 0 484 360" role="img" aria-label="机械夹爪夹取相邻柱子，抬升并交换位置">
       <line id="machine-rail" x1="20" y1="30" x2="464" y2="30" stroke="#abcde04d"/>
-      <line id="array-baseline" x1="20" y1="290" x2="464" y2="290" stroke="#abcde04d"/>
+      <line id="array-baseline" x1="20" y1="330" x2="464" y2="330" stroke="#abcde04d"/>
       <g id="bars"></g>
+      <g id="state-markers" aria-hidden="true"></g>
       <g class="indices" id="indices"></g>
       <g id="comparator">
         <path id="arm-0"/>
@@ -77,11 +78,16 @@
         </g>
       </g>
     </svg>
+    <section class="algorithm-state" id="algorithm-state" aria-label="算法关键状态" hidden>
+      <p id="state-description"></p>
+      <div class="state-legend"><span class="legend-fixed">已归位</span><span class="legend-ordered">局部有序</span><span class="legend-candidate">候选 / pivot</span><span class="legend-active">当前区间</span></div>
+      <div id="state-buckets" class="state-buckets" aria-label="计数桶" hidden></div>
+    </section>
     <div class="debug-controls">
       <p class="algorithm-note" id="algorithm-note" aria-live="polite" hidden></p>
       <div class="debug-toolbar" role="toolbar" aria-label="排序调试">
         <button class="tool" id="play-toggle" type="button" aria-label="暂停"><img id="play-icon" src="icons/pause.svg" alt=""></button>
-        <button class="tool" id="step" type="button" aria-label="单步执行一个真实动作" title="动作单步：比较、交换阶段、写入"><img src="icons/step-forward.svg" alt=""></button>
+        <button class="tool" id="step" type="button" aria-label="单步执行一个真实动作" title="动作单步：比较、交换阶段、写入、算法阶段边界"><img src="icons/step-forward.svg" alt=""></button>
         <button class="tool" id="restart" type="button" aria-label="重新开始"><img src="icons/rotate-ccw.svg" alt=""></button>
         <span class="execution-state" id="execution-state" aria-live="polite">运行中</span>
       </div>
@@ -147,6 +153,7 @@
   <script src="js/source-store.js"></script>
   <script src="js/code-editor.js"></script>
   <script src="js/compiler.js"></script>
+  <script src="js/trace-states.js"></script>
   <script src="js/trace-events.js?v=20261001-source-save-1"></script>
   <script src="js/compiler-panel.js"></script>
   <script src="js/demo.js?v=20261001-source-save-1"></script>

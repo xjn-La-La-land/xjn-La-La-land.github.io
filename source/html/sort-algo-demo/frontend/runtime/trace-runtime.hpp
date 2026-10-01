@@ -29,11 +29,11 @@ void capture(){for(int i=0;i<length;++i){before[i]=base[i];before_ids[i]=ids[i];
 Observed element(int &value){int p=slot(value);return {value,ids[p],p};}
 void remember(int key,Observed v){if(!key)return;for(auto &b:bindings)if(b.frame==frame&&b.key==key){b.observed=v;return;}bindings.push_back({frame,key,v});}
 Observed scalar(int value,int key){for(const auto &b:bindings)if(b.frame==frame&&b.key==key&&b.observed.value==value){Observed v=b.observed;v.position=-1;for(int i=0;i<length;++i)if(ids[i]==v.id&&base[i]==value){v.position=i;break;}return v;}return {value,-1,-1};}
-void emit(const char *kind,int line,int column,Variables vars,int left=-1,int right=-1,int middle=-1,int x=0,int y=0,const char *op="",int result=-1,int bucket=-1,int count=0){
+void emit(const char *kind,int line,int column,Variables vars,int left=-1,int right=-1,int middle=-1,int x=0,int y=0,const char *op="",int result=-1,int bucket=-1,int count=0,const char *phase=""){
  if(++sequence>10000)fail("trace event limit 10000");
  std::fprintf(file,"{\"kind\":\"%s\",\"seq\":%d,\"line\":%d,\"column\":%d,\"left\":%d,\"right\":%d,\"middle\":%d,\"x\":%d,\"y\":%d,\"operator\":\"%s\",\"result\":%d,\"bucket\":%d,\"count\":%d,\"before\":",kind,sequence,line,column,left,right,middle,x,y,op,result,bucket,count);
  list(before);std::fputs(",\"values\":",file);list(base);std::fputs(",\"beforeIds\":",file);list(before_ids);std::fputs(",\"ids\":",file);list(ids);
- std::fputs(",\"variables\":{",file);bool first=true;for(const auto &v:vars){std::fprintf(file,"%s\"%s\":%lld",first?"":",",v.name,v.value);first=false;}std::fputs("}}\n",file);
+ std::fputs(",\"variables\":{",file);bool first=true;for(const auto &v:vars){std::fprintf(file,"%s\"%s\":%lld",first?"":",",v.name,v.value);first=false;}std::fprintf(file,"},\"phase\":\"%s\"}\n",phase);
  if(std::ftell(file)>8*1024*1024)fail("trace byte limit 8 MiB");
 }
 bool compare(Observed left,Observed right,const char *op,int line,int column,Variables vars){bool r=false;if(!std::strcmp(op,">"))r=left.value>right.value;else if(!std::strcmp(op,"<"))r=left.value<right.value;else if(!std::strcmp(op,">="))r=left.value>=right.value;else if(!std::strcmp(op,"<="))r=left.value<=right.value;else if(!std::strcmp(op,"=="))r=left.value==right.value;else if(!std::strcmp(op,"!="))r=left.value!=right.value;else fail("comparison operator");capture();emit("compare",line,column,vars,left.position,right.position,-1,left.value,right.value,op,r);return r;}
@@ -47,5 +47,6 @@ int &drop(int &to,int value,int key,int line,int column,Variables vars){int r=sl
 int &write(int &to,int value,int line,int column,Variables vars){int p=slot(to);capture();int old=to;to=value;emit("write",line,column,vars,p,-1,-1,value,old);return to;}
 int *rotate(int *first,int *middle,int *last,int line,int column,Variables vars){int l=boundary(first),m=boundary(middle),r=boundary(last);if(l>m||m>r)fail("invalid rotate range");capture();int *result=std::rotate(first,middle,last);std::rotate(ids+l,ids+m,ids+r);emit("rotate",line,column,vars,l,r,m);return result;}
 template<unsigned N> int bucket(int (&values)[N],int index,int delta,bool post,int line,int column,Variables vars){if(index<0||index>=static_cast<int>(N))fail("bucket out of range");int old=values[index];values[index]+=delta;capture();emit("bucket",line,column,vars,-1,-1,-1,delta,old,"",-1,index,values[index]);return post?old:values[index];}
+void phase(const char *name,int line,int column,Variables vars){capture();emit("phase",line,column,vars,-1,-1,-1,0,0,"",-1,-1,0,name);}
 void complete(){if(!saved.empty())fail("unfinished manual exchange");capture();emit("finish",1,1,{});if(std::fclose(file))fail("trace file close");file=nullptr;}
 }

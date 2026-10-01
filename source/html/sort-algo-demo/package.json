@@ -1,0 +1,22 @@
+{
+  "name": "sort-algo-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "start": "node scripts/serve.cjs",
+    "fetch:compiler": "node scripts/fetch-toolchain.cjs",
+    "test": "node tests/editor.test.cjs && node tests/compiler.test.cjs && node tests/trace-events.test.cjs && node tests/gripper-reuse.test.cjs && node tests/playback-state.test.cjs && node tests/source-save.test.cjs && node tests/server.test.cjs",
+    "test:wasm": "node tests/wasm.test.cjs",
+    "test:trace": "node tests/trace-wasm.test.cjs"
+  },
+  "dependencies": {
+    "monaco-editor": "0.57.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "overrides": {
+    "dompurify": "3.4.16"
+  }
+}
