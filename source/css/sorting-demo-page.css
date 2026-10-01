@@ -1,0 +1,45 @@
+body.sorting-demo-page {
+  margin: 0;
+  overflow: hidden;
+}
+
+.sorting-demo-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.sorting-demo-nav {
+  position: relative;
+  z-index: 10;
+  flex: 0 0 70px;
+  height: 70px;
+}
+
+.sorting-demo-nav .navbar-container {
+  padding-top: 0;
+}
+
+.sorting-demo-frame {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 0;
+  border: 0;
+  background: #193958;
+}
+
+@media (max-width: 768px) {
+  .sorting-demo-nav {
+    flex-basis: 63px;
+    height: 63px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sorting-demo-nav {
+    flex-basis: 56px;
+    height: 56px;
+  }
+}

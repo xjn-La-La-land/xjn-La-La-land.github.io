@@ -1,0 +1,28 @@
+---
+layout: false
+---
+<!doctype html>
+<html lang="<%= config.language %>">
+<%- partial('components/header/head').replace('</head>', css('css/sorting-demo-page') + '\n</head>') %>
+<body class="sorting-demo-page">
+  <div class="sorting-demo-shell">
+    <div class="sorting-demo-nav">
+      <%- partial('components/header/navbar') %>
+    </div>
+    <iframe class="sorting-demo-frame" src="<%= url_for('/html/sort-algo-demo/frontend/index.html') %>" title="排序算法动画与 C++ 编辑器"></iframe>
+  </div>
+  <% if (theme.navbar.search.enable) { %>
+    <%- partial('utils/local-search') %>
+  <% } %>
+  <script type="module">
+    import { navbarShrink } from '<%- url_for("js/layouts/navbarShrink.js") %>';
+    import { initLocalSearchGlobals, initLocalSearchPage } from '<%- url_for("js/tools/localSearch.js") %>';
+    navbarShrink.initGlobals();
+    navbarShrink.refresh();
+    <% if (theme.navbar.search.enable) { %>
+      initLocalSearchGlobals();
+      initLocalSearchPage();
+    <% } %>
+  </script>
+</body>
+</html>
