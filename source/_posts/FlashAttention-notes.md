@@ -6,6 +6,7 @@ comments: false
 excerpt: 从 Online Softmax 出发，系统解读 FlashAttention 系列论文（FA1～FA4），涵盖算法推导、Recomputation、IO 复杂度分析，以及 FA3 针对 Hopper 的 Warp Specialization、FA4 针对 Blackwell 的 TMEM/流水线重设计。
 mathjax: true
 sticky: 60
+thumbnail: "/images/flash-attention/绘图.png"
 ---
 
 

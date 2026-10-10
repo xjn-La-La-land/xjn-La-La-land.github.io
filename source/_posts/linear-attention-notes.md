@@ -7,6 +7,7 @@ comments: false
 excerpt: 从 vanilla linear attention 到 DeltaNet、GDN、KDA 的算法脉络，chunkwise 实现推导，FLA GDN kernel 解析，以及 RTX 5090 上的 prefill 性能实测。
 mathjax: true
 sticky: 10
+thumbnail: /2026/09/07/linear-attention-notes/figure-04.png
 ---
 
 > 更新时间：2026-09-12  

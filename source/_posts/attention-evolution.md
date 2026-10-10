@@ -7,6 +7,7 @@ comments: false
 excerpt: 梳理 Full / Linear / Sparse / Compressed / SWA 五大类 Attention 的近期演进，配合 DeepSeek、Qwen、Kimi、MiniMax 四家技术报告的详细解读（内嵌 HTML 完整文档）。
 mathjax: true
 sticky: 50
+thumbnail: /2026/09/16/attention-evolution/cover.png
 ---
 
 <iframe src="/html/attention-evolution/attention-overview.html" loading="lazy" title="Attention 演进汇总" style="width:100%;height:80vh;min-height:560px;border:1px solid #d0d7de;border-radius:8px;background:#fff;"></iframe>

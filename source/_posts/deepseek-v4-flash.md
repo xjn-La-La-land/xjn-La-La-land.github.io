@@ -7,6 +7,7 @@ comments: false
 excerpt: DeepSeek-V4.1-Flash 架构解析：CED（Causal-Encoder+Decoder）结构、SWA Bounded Replay、CSA2 的 Full/Reindex/Reuse 三种模式、Hierarchical Sparse Indexer，以及 mHC、Engram、DSpark 等高效架构扩展。
 mathjax: true
 sticky: 30
+thumbnail: /2026/09/13/deepseek-v4-flash/figure-01.png
 ---
 
 ## 官方技术报告
