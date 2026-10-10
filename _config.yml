@@ -103,12 +103,8 @@ ignore:
 theme: redefine
 
 # Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
-deploy:
-  type: git
-  repo: https://github.com/xjn-La-La-land/xjn-La-La-land.github.io.git
-  # example, https://github.com/hexojs/hexojs.github.io
-  branch: main
+## Deployed by GitHub Actions (.github/workflows/pages.yml) on push to main.
+## Do not use `hexo deploy`: pushing public/ to main would overwrite the sources.
 
 math:
   enable: true

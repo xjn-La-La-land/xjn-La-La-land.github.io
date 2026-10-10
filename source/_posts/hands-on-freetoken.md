@@ -6,6 +6,7 @@ tags: LLM推理
 comments: false
 excerpt: 跟踪 FreeToken 中请求从 prompt 到 token 的完整执行路径，解析 Scheduler、Engine、前缀缓存、CUDA Graph、Overlap scheduling 与 MoE 权重缓存。
 mathjax: true
+sticky: 20
 ---
 
 > 这份笔记围绕 FreeToken 的 Scheduler 和 Engine，跟踪请求从输入 prompt 到返回 token 的过程，再展开前缀复用、模型计算和 MoE 优化。模型示例采用 Qwen3.6-35B-A3B 的文本推理路径。

@@ -5,6 +5,7 @@ tags: 体系结构
 comments: false
 excerpt: Intel AMX架构介绍、香山上AMX的移植、AMX GEMM算子的性能优化
 mathjax: true
+sticky: 40
 ---
 
 ## Intel AMX的架构介绍

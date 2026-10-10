@@ -12,6 +12,8 @@
 info:
   # Site title
   title: xiejianan's homepage
+  # Site subtitle
+  subtitle: the story of regular bean
   # Author name
   author: Jianan Xie
   # Site URL
@@ -164,6 +166,11 @@ home_banner:
         url: https://github.com/xjn-La-La-land
       - icon: email
         url: xiejianan21@mails.ucas.ac.cn
+      # Hexo merges arrays with the theme defaults by index, so the theme's extra
+      # default entries (you@example.com, telegram, custom icon) must be blanked here.
+      - url: ""
+      - url: ""
+      - url: ""
     # Social links with QRcode drawers
     qrs:
       - icon: weixin
@@ -199,9 +206,9 @@ navbar:
     About: 
       icon: fa-thin fa-user-chef
       submenus:
-        Me: /about/me
+        Me: /about/me/
         Github: https://github.com/xjn-La-La-land
-        Photos: /about/photos
+        Photos: /about/photos/
     # Links: 
     #   icon: fa-regular fa-link
     #   submenus:
